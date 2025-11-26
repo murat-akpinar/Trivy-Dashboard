@@ -2,6 +2,9 @@
 
 Trivy güvenlik tarama sonuçlarını toplayıp görselleştiren bir web dashboard uygulaması. CI/CD ortamlarında (Jenkins vb.) üretilen Trivy JSON çıktılarını tek bir merkezde toplayıp, SonarQube benzeri bir arayüz üzerinden kolayca incelemenizi sağlar.
 
+
+![Dashboard](/images/dashboard.png)
+![Project](/images/project.jpg)
 ---
 
 ## Özellikler

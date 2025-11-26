@@ -12,7 +12,7 @@ COPY . .
 
 RUN go build -o /trivy-dashboard-backend ./...
 
-FROM alpine:latest AS runtime
+FROM alpine:3.22 AS runtime
 
 WORKDIR /app
 

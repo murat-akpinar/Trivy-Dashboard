@@ -14,7 +14,6 @@ services:
       - PORT=8080
       - EXPORT_DIR=/app/export
       - FQDN=${FQDN}
-      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
       - VITE_API_BASE=${VITE_API_BASE}
       - FRONTEND_PORT=${FRONTEND_PORT}
     volumes:

@@ -90,8 +90,44 @@ type Vulnerability struct {
 func main() {
 	r := chi.NewRouter()
 
+	// CORS configuration - support FQDN from environment variable
+	allowedOrigins := []string{"http://localhost:3000", "http://localhost:80", "http://localhost"} // Default for local development
+	
+	// ALLOWED_ORIGINS manuel olarak belirtilmişse onu kullan (en yüksek öncelik)
+	if origin := os.Getenv("ALLOWED_ORIGINS"); origin != "" {
+		// Support multiple origins separated by comma
+		origins := strings.Split(origin, ",")
+		allowedOrigins = []string{} // Manuel belirtilmişse varsayılanları temizle
+		for _, o := range origins {
+			o = strings.TrimSpace(o)
+			if o != "" {
+				allowedOrigins = append(allowedOrigins, o)
+			}
+		}
+	} else if fqdn := os.Getenv("FQDN"); fqdn != "" {
+		// ALLOWED_ORIGINS yoksa FQDN'den otomatik türet (production)
+		fqdn = strings.TrimSpace(fqdn)
+		allowedOrigins = []string{} // FQDN kullanılıyorsa varsayılanları temizle
+		// VITE_API_BASE'e bakarak HTTP mi HTTPS mi olduğunu anla
+		viteBase := os.Getenv("VITE_API_BASE")
+		if strings.HasPrefix(viteBase, "http://") {
+			// HTTP ise (local test)
+			allowedOrigins = append(allowedOrigins, "http://"+fqdn)
+		} else {
+			// HTTPS ise (production)
+			allowedOrigins = append(allowedOrigins, "https://"+fqdn)
+		}
+	} else if frontendPort := os.Getenv("FRONTEND_PORT"); frontendPort != "" {
+		// ALLOWED_ORIGINS ve FQDN yoksa FRONTEND_PORT'tan otomatik oluştur (local development)
+		frontendPort = strings.TrimSpace(frontendPort)
+		allowedOrigins = []string{} // FRONTEND_PORT kullanılıyorsa varsayılanları temizle
+		allowedOrigins = append(allowedOrigins, "http://localhost:"+frontendPort)
+		// Ayrıca localhost (port olmadan) da ekle
+		allowedOrigins = append(allowedOrigins, "http://localhost")
+	}
+	
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedOrigins:   allowedOrigins,
 		AllowedMethods:   []string{"GET", "OPTIONS"},
 		AllowedHeaders:   []string{"*"},
 		ExposedHeaders:   []string{"*"},

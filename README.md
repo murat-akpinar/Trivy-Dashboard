@@ -86,36 +86,102 @@ cp .example.env .env
 
 ### Dosya Adı Formatı
 
-Trivy JSON raporlarını `export/` klasörüne koyarken şu formatı kullanın:
+Trivy JSON raporlarını `export/` klasörüne koyarken şu formatları kullanabilirsiniz:
 
+#### Yapı 1: Düz Yapı (Flat Structure)
+
+**Format 1: Basit (Tek tarama)**
 ```
-{proje-ismi}-{imaj-ismi}.json
+export/{proje-ismi}-{imaj-ismi}.json
+```
+
+**Format 2: Zaman Damgası ile (Çoklu tarama)**
+```
+export/{proje-ismi}-{imaj-ismi}-{YYYYMMDD-HHMMSS}.json
 ```
 
 **Örnekler:**
-- `trivy-dashboard-backend.json` → Proje: `trivy-dashboard`, İmaj: `backend`
-- `trivy-dashboard-frontend.json` → Proje: `trivy-dashboard`, İmaj: `frontend`
-- `my-service-api.json` → Proje: `my-service`, İmaj: `api`
+- `export/trivy-dashboard-backend.json` → Proje: `trivy-dashboard`, İmaj: `backend`
+- `export/trivy-dashboard-backend-20251126-182000.json` → Proje: `trivy-dashboard`, İmaj: `backend` (26 Kasım 2025, 18:20:00)
+- `export/trivy-dashboard-frontend.json` → Proje: `trivy-dashboard`, İmaj: `frontend`
+- `export/my-service-api-20251126-120000.json` → Proje: `my-service`, İmaj: `api` (26 Kasım 2025, 12:00:00)
+
+#### Yapı 2: Dizin Yapısı (Directory Structure) - Önerilen
+
+**Format 1: Basit (Tek tarama)**
+```
+export/{proje-ismi}/{imaj-ismi}.json
+```
+
+**Format 2: Zaman Damgası ile (Çoklu tarama)**
+```
+export/{proje-ismi}/{imaj-ismi}-{YYYYMMDD-HHMMSS}.json
+```
+
+**Örnekler:**
+- `export/trivy-dashboard/backend.json` → Proje: `trivy-dashboard`, İmaj: `backend`
+- `export/trivy-dashboard/backend-20251126-182000.json` → Proje: `trivy-dashboard`, İmaj: `backend` (26 Kasım 2025, 18:20:00)
+- `export/trivy-dashboard/frontend.json` → Proje: `trivy-dashboard`, İmaj: `frontend`
+- `export/my-service/api-20251126-120000.json` → Proje: `my-service`, İmaj: `api` (26 Kasım 2025, 12:00:00)
+
+**Avantajlar:**
+- ✅ Daha düzenli dosya organizasyonu
+- ✅ Proje bazında kolay yönetim
+- ✅ Çok sayıda proje olduğunda daha temiz yapı
+- ✅ Her iki yapı da desteklenir (düz ve dizin)
+
+**Not**: 
+- Zaman damgası formatı `YYYYMMDD-HHMMSS` şeklindedir
+- Aynı proje-imaj kombinasyonu için birden fazla tarama yaparsanız, tüm taramalar dashboard'da görüntülenecektir
+- Backend otomatik olarak tüm alt dizinlerdeki JSON dosyalarını tarar (recursive)
 
 ### Jenkins Pipeline Örneği
 
+**Düz Yapı için:**
 ```bash
 # Trivy taraması yap ve JSON çıktısı al
-trivy image --format json -o /tmp/my-project-backend.json my-project-backend:latest
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+trivy image --format json -o /tmp/my-project-backend-${TIMESTAMP}.json my-project-backend:latest
 
 # Dashboard sunucusuna gönder
-scp /tmp/my-project-backend.json user@dashboard-host:/path/to/trivy-dashboard/export/
+scp /tmp/my-project-backend-${TIMESTAMP}.json user@dashboard-host:/path/to/trivy-dashboard/export/
+```
+
+**Dizin Yapısı için (Önerilen):**
+```bash
+# Proje dizinini oluştur (ilk kez ise)
+ssh user@dashboard-host "mkdir -p /path/to/trivy-dashboard/export/my-project"
+
+# Trivy taraması yap ve JSON çıktısı al
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+trivy image --format json -o /tmp/backend-${TIMESTAMP}.json my-project-backend:latest
+
+# Dashboard sunucusuna gönder (dizin yapısına)
+scp /tmp/backend-${TIMESTAMP}.json user@dashboard-host:/path/to/trivy-dashboard/export/my-project/
 ```
 
 ### Docker ile Test
 
+**Hızlı Tarama (Script Kullanımı - Önerilen):**
 ```bash
+# Backend için tarama (zaman damgası otomatik eklenir)
+./scan-backend.sh
+
+# Frontend için tarama (zaman damgası otomatik eklenir)
+./scan-frontend.sh
+```
+
+**Manuel Tarama (Zaman Damgası ile):**
+```bash
+# Zaman damgası oluştur
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+
 # Backend image'ini tara
 docker run --rm \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v $(pwd)/export:/output \
   aquasec/trivy:latest image \
-  --format json -o /output/trivy-dashboard-backend.json \
+  --format json -o /output/trivy-dashboard-backend-${TIMESTAMP}.json \
   trivy-dashboard-backend:latest
 
 # Frontend image'ini tara
@@ -123,8 +189,19 @@ docker run --rm \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v $(pwd)/export:/output \
   aquasec/trivy:latest image \
-  --format json -o /output/trivy-dashboard-frontend.json \
+  --format json -o /output/trivy-dashboard-frontend-${TIMESTAMP}.json \
   trivy-dashboard-frontend:latest
+```
+
+**Basit Tarama (Tek dosya, üzerine yazar - Önerilmez):**
+```bash
+# ⚠️ Bu komut eski dosyayı üzerine yazar, tarama geçmişi kaybolur
+docker run --rm \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v $(pwd)/export:/output \
+  aquasec/trivy:latest image \
+  --format json -o /output/trivy-dashboard-backend.json \
+  trivy-dashboard-backend:latest
 ```
 
 ---
@@ -156,6 +233,8 @@ trivy-dashboard/
 │   ├── package.json     # npm dependencies
 │   └── Dockerfile       # Frontend container
 ├── export/              # Trivy JSON raporları buraya konur
+├── scan-backend.sh      # Backend tarama scripti (zaman damgası ile)
+├── scan-frontend.sh     # Frontend tarama scripti (zaman damgası ile)
 ├── docker-compose.yml   # Container orchestration
 └── README.md
 ```
@@ -204,11 +283,37 @@ Dashboard, her imaj için severity sayılarına göre otomatik olarak bir harf n
 
 ---
 
+## Proje Geliştirme Önerileri
+
+### Gelecek Özellikler
+
+1. **Zaman Serisi Analizi**: Aynı imaj için farklı zamanlardaki taramaları karşılaştırma
+2. **Trend Grafikleri**: Vulnerability sayılarının zaman içindeki değişimini görselleştirme
+3. **E-posta Bildirimleri**: Yeni CRITICAL/HIGH açıklar bulunduğunda bildirim gönderme
+4. **Export/Import**: Tarama sonuçlarını yedekleme ve geri yükleme
+5. **API Authentication**: Backend API'sine erişim kontrolü
+6. **Database Entegrasyonu**: SQLite/PostgreSQL ile tarama geçmişini saklama
+7. **Webhook Desteği**: CI/CD pipeline'lardan otomatik tarama tetikleme
+8. **Filtreleme ve Sıralama**: Vulnerability listesinde gelişmiş filtreleme
+9. **Karşılaştırma Modu**: İki tarama sonucunu yan yana karşılaştırma
+10. **Otomatik Temizlik**: Eski tarama dosyalarını otomatik silme (retention policy)
+
+### Mevcut Özellikler
+
+- ✅ Proje bazlı görünüm
+- ✅ Severity filtreleme
+- ✅ Harf notu sistemi (A, B, C, D)
+- ✅ Zaman damgası ile çoklu tarama desteği
+- ✅ Catppuccin Mocha tema
+- ✅ Responsive tasarım
+- ✅ Docker Compose desteği
+
 ## Güvenlik
 
 - Backend ve frontend dependencies güncel tutulur
 - Alpine Linux base image'leri güvenlik güncellemeleri ile güncellenir
 - `npm audit` ve `go mod` ile düzenli güvenlik kontrolleri yapılır
+- Go 1.25 ve Alpine 3.22 kullanılarak en güncel güvenlik yamaları sağlanır
 
 ---
 

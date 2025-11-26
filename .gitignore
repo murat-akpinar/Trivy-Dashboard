@@ -17,3 +17,9 @@ Thumbs.db
 # Logs
 *.log
 
+# Extra
+scan-backend.sh
+scan-frontend.sh
+TO_DO.md
+
+

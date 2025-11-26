@@ -539,7 +539,7 @@ function App() {
                                           {scanGrade.grade}
                                         </div>
                                         <div>
-                                          <p className="text-xs font-mono text-catppuccin-overlay1">
+                                          <p className="text-xs font-mono text-catppuccin-text">
                                             {scan.filename}
                                           </p>
                                           <p className="text-xs text-catppuccin-overlay1 mt-0.5">

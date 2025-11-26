@@ -382,11 +382,11 @@ func main() {
 							severity = "UNKNOWN"
 						}
 						scanSummary.SeverityCount[severity]++
-						project.SeverityCount[severity]++
+						// Don't add to project totals here - we'll calculate from latest scans only
 					}
 				}
 				scanSummary.TotalVulns = total
-				project.TotalVulns += total
+				// Don't add to project.TotalVulns here - we'll calculate from latest scans only
 			}
 
 			// Initialize image summary if not exists
@@ -419,6 +419,10 @@ func main() {
 		}
 
 		// Convert map to slice and sort scans by date (newest first)
+		// Also calculate project totals from latest scans only
+		project.TotalVulns = 0
+		project.SeverityCount = make(map[string]int)
+		
 		for _, imageSummary := range imagesMap {
 			// Sort scans by ModifiedAt (newest first)
 			scans := imageSummary.Scans
@@ -430,6 +434,14 @@ func main() {
 				}
 			}
 			imageSummary.Scans = scans
+			
+			// Use latest scan for image totals (already set in the loop above)
+			// Add image totals to project totals (from latest scan only)
+			project.TotalVulns += imageSummary.TotalVulns
+			for severity, count := range imageSummary.SeverityCount {
+				project.SeverityCount[severity] += count
+			}
+			
 			project.Images = append(project.Images, *imageSummary)
 		}
 

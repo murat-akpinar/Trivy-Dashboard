@@ -1,15 +1,15 @@
 {
   "SchemaVersion": 2,
-  "CreatedAt": "2025-11-26T17:03:34.706380461Z",
+  "CreatedAt": "2025-11-26T17:44:36.545072462Z",
   "ArtifactName": "trivy-dashboard-frontend:latest",
   "ArtifactType": "container_image",
   "Metadata": {
-    "Size": 54388224,
+    "Size": 55394304,
     "OS": {
       "Family": "alpine",
       "Name": "3.22.2"
     },
-    "ImageID": "sha256:503df0dd7957df5efaf681bb9ff0ec8d4b1d36c910b1a442bc2a6f992bf8f632",
+    "ImageID": "sha256:9d3b6931e3d21907ef3c977dd0551092cc04ef05c1218da7ba5f359776950ba3",
     "DiffIDs": [
       "sha256:256f393e029fa2063d8c93720da36a74a032bed3355a2bc3e313ad12f8bde9d1",
       "sha256:50b58ca2a3f5df327f34b26a67bcf09e84bd922972d651ed30939fc7378f8acc",
@@ -19,14 +19,15 @@
       "sha256:3297b9628ff3624c5cec418fce70b84e81cee2d50beec077b58fb6daf478df56",
       "sha256:99ea4bde418df15b6e7a8b9e4aed69b3b46a7176e7dcd26ee8f715cf0f29a4a2",
       "sha256:25906c27b84d62cffa22785bff6e5f2d29499313c43b8a4985890528ac72c7ac",
-      "sha256:94a218537ffff816b274afd04ac046f6eff2dc84c30006496c32a76b8b913b42"
+      "sha256:2b6a2ec1acf37019227a23ace831cb5c2e67ff7d15205c8962543becff5dda59",
+      "sha256:2a01f9a71485b8e1c535ce9b73dbfb94323a69fcf162e0a2fa444c5a7742700b"
     ],
     "RepoTags": [
       "trivy-dashboard-frontend:latest"
     ],
     "ImageConfig": {
       "architecture": "amd64",
-      "created": "2025-11-26T19:58:52.905578327+03:00",
+      "created": "2025-11-26T20:41:43.401950037+03:00",
       "history": [
         {
           "created": "2025-10-08T11:04:56Z",
@@ -135,18 +136,23 @@
           "comment": "buildkit.dockerfile.v0"
         },
         {
-          "created": "2025-11-26T16:58:52Z",
+          "created": "2025-11-26T17:41:37Z",
+          "created_by": "RUN /bin/sh -c apk update \u0026\u0026 apk upgrade \u0026\u0026 apk add --no-cache ca-certificates \u0026\u0026     rm -rf /var/cache/apk/* # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-11-26T17:41:43Z",
           "created_by": "COPY /app/dist /usr/share/nginx/html # buildkit",
           "comment": "buildkit.dockerfile.v0"
         },
         {
-          "created": "2025-11-26T16:58:52Z",
+          "created": "2025-11-26T17:41:43Z",
           "created_by": "EXPOSE [80/tcp]",
           "comment": "buildkit.dockerfile.v0",
           "empty_layer": true
         },
         {
-          "created": "2025-11-26T16:58:52Z",
+          "created": "2025-11-26T17:41:43Z",
           "created_by": "CMD [\"nginx\" \"-g\" \"daemon off;\"]",
           "comment": "buildkit.dockerfile.v0",
           "empty_layer": true
@@ -164,7 +170,8 @@
           "sha256:3297b9628ff3624c5cec418fce70b84e81cee2d50beec077b58fb6daf478df56",
           "sha256:99ea4bde418df15b6e7a8b9e4aed69b3b46a7176e7dcd26ee8f715cf0f29a4a2",
           "sha256:25906c27b84d62cffa22785bff6e5f2d29499313c43b8a4985890528ac72c7ac",
-          "sha256:94a218537ffff816b274afd04ac046f6eff2dc84c30006496c32a76b8b913b42"
+          "sha256:2b6a2ec1acf37019227a23ace831cb5c2e67ff7d15205c8962543becff5dda59",
+          "sha256:2a01f9a71485b8e1c535ce9b73dbfb94323a69fcf162e0a2fa444c5a7742700b"
         ]
       },
       "config": {
@@ -232,8 +239,12 @@
         "DiffID": "sha256:25906c27b84d62cffa22785bff6e5f2d29499313c43b8a4985890528ac72c7ac"
       },
       {
-        "Size": 161792,
-        "DiffID": "sha256:94a218537ffff816b274afd04ac046f6eff2dc84c30006496c32a76b8b913b42"
+        "Size": 986112,
+        "DiffID": "sha256:2b6a2ec1acf37019227a23ace831cb5c2e67ff7d15205c8962543becff5dda59"
+      },
+      {
+        "Size": 181760,
+        "DiffID": "sha256:2a01f9a71485b8e1c535ce9b73dbfb94323a69fcf162e0a2fa444c5a7742700b"
       }
     ]
   },
@@ -248,7 +259,7 @@
           "Name": "alpine-baselayout",
           "Identifier": {
             "PURL": "pkg:apk/alpine/alpine-baselayout@3.7.0-r0?arch=x86_64\u0026distro=3.22.2",
-            "UID": "cf99a0742a931dd7"
+            "UID": "8138944c3c804f0d"
           },
           "Version": "3.7.0-r0",
           "Arch": "x86_64",
@@ -260,7 +271,7 @@
           "Maintainer": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
           "DependsOn": [
             "alpine-baselayout-data@3.7.0-r0",
-            "busybox-binsh@1.37.0-r19"
+            "busybox-binsh@1.37.0-r20"
           ],
           "Layer": {
             "DiffID": "sha256:256f393e029fa2063d8c93720da36a74a032bed3355a2bc3e313ad12f8bde9d1"
@@ -504,16 +515,16 @@
           ]
         },
         {
-          "ID": "busybox@1.37.0-r19",
+          "ID": "busybox@1.37.0-r20",
           "Name": "busybox",
           "Identifier": {
-            "PURL": "pkg:apk/alpine/busybox@1.37.0-r19?arch=x86_64\u0026distro=3.22.2",
-            "UID": "5158911d21d1c608"
+            "PURL": "pkg:apk/alpine/busybox@1.37.0-r20?arch=x86_64\u0026distro=3.22.2",
+            "UID": "4c1e95c171e1f07b"
           },
-          "Version": "1.37.0-r19",
+          "Version": "1.37.0-r20",
           "Arch": "x86_64",
           "SrcName": "busybox",
-          "SrcVersion": "1.37.0-r19",
+          "SrcVersion": "1.37.0-r20",
           "Licenses": [
             "GPL-2.0-only"
           ],
@@ -522,9 +533,9 @@
             "musl@1.2.5-r10"
           ],
           "Layer": {
-            "DiffID": "sha256:256f393e029fa2063d8c93720da36a74a032bed3355a2bc3e313ad12f8bde9d1"
+            "DiffID": "sha256:2b6a2ec1acf37019227a23ace831cb5c2e67ff7d15205c8962543becff5dda59"
           },
-          "Digest": "sha1:b1022a4c14e9025701fbad10b66f8bb3b98dbaea",
+          "Digest": "sha1:3e9d75288280b3c492e91f30e126c2400d1701b3",
           "InstalledFiles": [
             "bin/busybox",
             "etc/securetty",
@@ -536,27 +547,27 @@
           ]
         },
         {
-          "ID": "busybox-binsh@1.37.0-r19",
+          "ID": "busybox-binsh@1.37.0-r20",
           "Name": "busybox-binsh",
           "Identifier": {
-            "PURL": "pkg:apk/alpine/busybox-binsh@1.37.0-r19?arch=x86_64\u0026distro=3.22.2",
-            "UID": "7150d5a240bb77cc"
+            "PURL": "pkg:apk/alpine/busybox-binsh@1.37.0-r20?arch=x86_64\u0026distro=3.22.2",
+            "UID": "1688ce175c12917e"
           },
-          "Version": "1.37.0-r19",
+          "Version": "1.37.0-r20",
           "Arch": "x86_64",
           "SrcName": "busybox",
-          "SrcVersion": "1.37.0-r19",
+          "SrcVersion": "1.37.0-r20",
           "Licenses": [
             "GPL-2.0-only"
           ],
           "Maintainer": "Sören Tempel \u003csoeren+alpine@soeren-tempel.net\u003e",
           "DependsOn": [
-            "busybox@1.37.0-r19"
+            "busybox@1.37.0-r20"
           ],
           "Layer": {
-            "DiffID": "sha256:256f393e029fa2063d8c93720da36a74a032bed3355a2bc3e313ad12f8bde9d1"
+            "DiffID": "sha256:2b6a2ec1acf37019227a23ace831cb5c2e67ff7d15205c8962543becff5dda59"
           },
-          "Digest": "sha1:d580ccf710ae083332df5eb8813735faa076d87e",
+          "Digest": "sha1:acd495b3054831a7a33137aa5a2ba6193a08a2d2",
           "InstalledFiles": [
             "bin/sh"
           ]
@@ -593,7 +604,7 @@
           "Name": "ca-certificates",
           "Identifier": {
             "PURL": "pkg:apk/alpine/ca-certificates@20250911-r0?arch=x86_64\u0026distro=3.22.2",
-            "UID": "11629aa971714b5f"
+            "UID": "c07d5d05c7e08e23"
           },
           "Version": "20250911-r0",
           "Arch": "x86_64",
@@ -605,7 +616,7 @@
           ],
           "Maintainer": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
           "DependsOn": [
-            "busybox-binsh@1.37.0-r19",
+            "busybox-binsh@1.37.0-r20",
             "libcrypto3@3.5.4-r0",
             "musl@1.2.5-r10"
           ],
@@ -828,7 +839,7 @@
           "Name": "fontconfig",
           "Identifier": {
             "PURL": "pkg:apk/alpine/fontconfig@2.15.0-r3?arch=x86_64\u0026distro=3.22.2",
-            "UID": "67c1c93642c7c9bb"
+            "UID": "4e1f619aabe07d46"
           },
           "Version": "2.15.0-r3",
           "Arch": "x86_64",
@@ -839,7 +850,7 @@
           ],
           "Maintainer": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
           "DependsOn": [
-            "busybox-binsh@1.37.0-r19",
+            "busybox-binsh@1.37.0-r20",
             "freetype@2.13.3-r0",
             "libexpat@2.7.3-r0",
             "musl@1.2.5-r10"
@@ -2458,7 +2469,7 @@
           "Name": "nginx",
           "Identifier": {
             "PURL": "pkg:apk/alpine/nginx@1.29.3-r1?arch=x86_64\u0026distro=3.22.2",
-            "UID": "5ce6f0a4683e36e5"
+            "UID": "a88f2feafcdecaab"
           },
           "Version": "1.29.3-r1",
           "Arch": "x86_64",
@@ -2471,7 +2482,7 @@
           ],
           "Maintainer": "NGINX Packaging \u003cnginx-packaging@f5.com\u003e",
           "DependsOn": [
-            "busybox-binsh@1.37.0-r19",
+            "busybox-binsh@1.37.0-r20",
             "libcrypto3@3.5.4-r0",
             "libssl3@3.5.4-r0",
             "musl@1.2.5-r10",
@@ -2507,7 +2518,7 @@
           "Name": "nginx-module-geoip",
           "Identifier": {
             "PURL": "pkg:apk/alpine/nginx-module-geoip@1.29.3-r1?arch=x86_64\u0026distro=3.22.2",
-            "UID": "3000d42afd3ea223"
+            "UID": "b80f7c13241b21e6"
           },
           "Version": "1.29.3-r1",
           "Arch": "x86_64",
@@ -2520,7 +2531,7 @@
           ],
           "Maintainer": "NGINX Packaging \u003cnginx-packaging@f5.com\u003e",
           "DependsOn": [
-            "busybox-binsh@1.37.0-r19",
+            "busybox-binsh@1.37.0-r20",
             "geoip@1.6.12-r6",
             "musl@1.2.5-r10",
             "nginx@1.29.3-r1"
@@ -2542,7 +2553,7 @@
           "Name": "nginx-module-image-filter",
           "Identifier": {
             "PURL": "pkg:apk/alpine/nginx-module-image-filter@1.29.3-r1?arch=x86_64\u0026distro=3.22.2",
-            "UID": "1ec37a3f3756d65f"
+            "UID": "d8dc27481a3a645"
           },
           "Version": "1.29.3-r1",
           "Arch": "x86_64",
@@ -2555,7 +2566,7 @@
           ],
           "Maintainer": "NGINX Packaging \u003cnginx-packaging@f5.com\u003e",
           "DependsOn": [
-            "busybox-binsh@1.37.0-r19",
+            "busybox-binsh@1.37.0-r20",
             "libgd@2.3.3-r10",
             "musl@1.2.5-r10",
             "nginx@1.29.3-r1"
@@ -2575,7 +2586,7 @@
           "Name": "nginx-module-njs",
           "Identifier": {
             "PURL": "pkg:apk/alpine/nginx-module-njs@1.29.3.0.9.4-r1?arch=x86_64\u0026distro=3.22.2",
-            "UID": "58a053ab9ce68bc"
+            "UID": "f751960ff18f6348"
           },
           "Version": "1.29.3.0.9.4-r1",
           "Arch": "x86_64",
@@ -2588,7 +2599,7 @@
           ],
           "Maintainer": "NGINX Packaging \u003cnginx-packaging@f5.com\u003e",
           "DependsOn": [
-            "busybox-binsh@1.37.0-r19",
+            "busybox-binsh@1.37.0-r20",
             "libcrypto3@3.5.4-r0",
             "libedit@20250104.3.1-r1",
             "libxml2@2.13.9-r0",
@@ -2616,7 +2627,7 @@
           "Name": "nginx-module-xslt",
           "Identifier": {
             "PURL": "pkg:apk/alpine/nginx-module-xslt@1.29.3-r1?arch=x86_64\u0026distro=3.22.2",
-            "UID": "c0dcf4148e1255b5"
+            "UID": "139245490cf80728"
           },
           "Version": "1.29.3-r1",
           "Arch": "x86_64",
@@ -2629,7 +2640,7 @@
           ],
           "Maintainer": "NGINX Packaging \u003cnginx-packaging@f5.com\u003e",
           "DependsOn": [
-            "busybox-binsh@1.37.0-r19",
+            "busybox-binsh@1.37.0-r20",
             "libxml2@2.13.9-r0",
             "libxslt@1.1.43-r3",
             "musl@1.2.5-r10",
@@ -2701,16 +2712,16 @@
           ]
         },
         {
-          "ID": "ssl_client@1.37.0-r19",
+          "ID": "ssl_client@1.37.0-r20",
           "Name": "ssl_client",
           "Identifier": {
-            "PURL": "pkg:apk/alpine/ssl_client@1.37.0-r19?arch=x86_64\u0026distro=3.22.2",
-            "UID": "691bd1fc4de953e2"
+            "PURL": "pkg:apk/alpine/ssl_client@1.37.0-r20?arch=x86_64\u0026distro=3.22.2",
+            "UID": "c8ecd6a28c029f44"
           },
-          "Version": "1.37.0-r19",
+          "Version": "1.37.0-r20",
           "Arch": "x86_64",
           "SrcName": "busybox",
-          "SrcVersion": "1.37.0-r19",
+          "SrcVersion": "1.37.0-r20",
           "Licenses": [
             "GPL-2.0-only"
           ],
@@ -2721,9 +2732,9 @@
             "musl@1.2.5-r10"
           ],
           "Layer": {
-            "DiffID": "sha256:256f393e029fa2063d8c93720da36a74a032bed3355a2bc3e313ad12f8bde9d1"
+            "DiffID": "sha256:2b6a2ec1acf37019227a23ace831cb5c2e67ff7d15205c8962543becff5dda59"
           },
-          "Digest": "sha1:20dcfaf6d1081b07cd138cabb32d91afe71ad09c",
+          "Digest": "sha1:8bdfbaab4c99a5d77844ca989971c87161126784",
           "InstalledFiles": [
             "usr/bin/ssl_client"
           ]
@@ -3468,278 +3479,6 @@
             "usr/lib/libzstd.so.1",
             "usr/lib/libzstd.so.1.5.7"
           ]
-        }
-      ],
-      "Vulnerabilities": [
-        {
-          "VulnerabilityID": "CVE-2024-58251",
-          "PkgID": "busybox@1.37.0-r19",
-          "PkgName": "busybox",
-          "PkgIdentifier": {
-            "PURL": "pkg:apk/alpine/busybox@1.37.0-r19?arch=x86_64\u0026distro=3.22.2",
-            "UID": "5158911d21d1c608"
-          },
-          "InstalledVersion": "1.37.0-r19",
-          "FixedVersion": "1.37.0-r20",
-          "Status": "fixed",
-          "Layer": {
-            "DiffID": "sha256:256f393e029fa2063d8c93720da36a74a032bed3355a2bc3e313ad12f8bde9d1"
-          },
-          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2024-58251",
-          "DataSource": {
-            "ID": "alpine",
-            "Name": "Alpine Secdb",
-            "URL": "https://secdb.alpinelinux.org/"
-          },
-          "Title": "In netstat in BusyBox through 1.37.0, local users can launch of networ ...",
-          "Description": "In netstat in BusyBox through 1.37.0, local users can launch of network application with an argv[0] containing an ANSI terminal escape sequence, leading to a denial of service (terminal locked up) when netstat is used by a victim.",
-          "Severity": "MEDIUM",
-          "CweIDs": [
-            "CWE-150"
-          ],
-          "VendorSeverity": {
-            "ubuntu": 2
-          },
-          "References": [
-            "http://www.openwall.com/lists/oss-security/2025/04/23/6",
-            "https://bugs.busybox.net/show_bug.cgi?id=15922",
-            "https://www.busybox.net",
-            "https://www.busybox.net/downloads/",
-            "https://www.cve.org/CVERecord?id=CVE-2024-58251"
-          ],
-          "PublishedDate": "2025-04-23T18:16:03.057Z",
-          "LastModifiedDate": "2025-04-29T13:52:47.47Z"
-        },
-        {
-          "VulnerabilityID": "CVE-2025-46394",
-          "PkgID": "busybox@1.37.0-r19",
-          "PkgName": "busybox",
-          "PkgIdentifier": {
-            "PURL": "pkg:apk/alpine/busybox@1.37.0-r19?arch=x86_64\u0026distro=3.22.2",
-            "UID": "5158911d21d1c608"
-          },
-          "InstalledVersion": "1.37.0-r19",
-          "FixedVersion": "1.37.0-r20",
-          "Status": "fixed",
-          "Layer": {
-            "DiffID": "sha256:256f393e029fa2063d8c93720da36a74a032bed3355a2bc3e313ad12f8bde9d1"
-          },
-          "SeveritySource": "nvd",
-          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2025-46394",
-          "DataSource": {
-            "ID": "alpine",
-            "Name": "Alpine Secdb",
-            "URL": "https://secdb.alpinelinux.org/"
-          },
-          "Title": "In tar in BusyBox through 1.37.0, a TAR archive can have filenames hid ...",
-          "Description": "In tar in BusyBox through 1.37.0, a TAR archive can have filenames hidden from a listing through the use of terminal escape sequences.",
-          "Severity": "LOW",
-          "CweIDs": [
-            "CWE-451"
-          ],
-          "VendorSeverity": {
-            "nvd": 1,
-            "ubuntu": 2
-          },
-          "CVSS": {
-            "nvd": {
-              "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N",
-              "V3Score": 3.3
-            }
-          },
-          "References": [
-            "http://www.openwall.com/lists/oss-security/2025/04/23/5",
-            "http://www.openwall.com/lists/oss-security/2025/04/24/3",
-            "https://bugs.busybox.net/show_bug.cgi?id=16018",
-            "https://lists.busybox.net/pipermail/busybox/2024-July/090806.html",
-            "https://lists.busybox.net/pipermail/busybox/2024-July/090814.html",
-            "https://www.busybox.net",
-            "https://www.busybox.net/downloads/",
-            "https://www.cve.org/CVERecord?id=CVE-2025-46394",
-            "https://www.openwall.com/lists/oss-security/2025/04/23/1"
-          ],
-          "PublishedDate": "2025-04-23T16:15:48.713Z",
-          "LastModifiedDate": "2025-09-24T14:38:22.127Z"
-        },
-        {
-          "VulnerabilityID": "CVE-2024-58251",
-          "PkgID": "busybox-binsh@1.37.0-r19",
-          "PkgName": "busybox-binsh",
-          "PkgIdentifier": {
-            "PURL": "pkg:apk/alpine/busybox-binsh@1.37.0-r19?arch=x86_64\u0026distro=3.22.2",
-            "UID": "7150d5a240bb77cc"
-          },
-          "InstalledVersion": "1.37.0-r19",
-          "FixedVersion": "1.37.0-r20",
-          "Status": "fixed",
-          "Layer": {
-            "DiffID": "sha256:256f393e029fa2063d8c93720da36a74a032bed3355a2bc3e313ad12f8bde9d1"
-          },
-          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2024-58251",
-          "DataSource": {
-            "ID": "alpine",
-            "Name": "Alpine Secdb",
-            "URL": "https://secdb.alpinelinux.org/"
-          },
-          "Title": "In netstat in BusyBox through 1.37.0, local users can launch of networ ...",
-          "Description": "In netstat in BusyBox through 1.37.0, local users can launch of network application with an argv[0] containing an ANSI terminal escape sequence, leading to a denial of service (terminal locked up) when netstat is used by a victim.",
-          "Severity": "MEDIUM",
-          "CweIDs": [
-            "CWE-150"
-          ],
-          "VendorSeverity": {
-            "ubuntu": 2
-          },
-          "References": [
-            "http://www.openwall.com/lists/oss-security/2025/04/23/6",
-            "https://bugs.busybox.net/show_bug.cgi?id=15922",
-            "https://www.busybox.net",
-            "https://www.busybox.net/downloads/",
-            "https://www.cve.org/CVERecord?id=CVE-2024-58251"
-          ],
-          "PublishedDate": "2025-04-23T18:16:03.057Z",
-          "LastModifiedDate": "2025-04-29T13:52:47.47Z"
-        },
-        {
-          "VulnerabilityID": "CVE-2025-46394",
-          "PkgID": "busybox-binsh@1.37.0-r19",
-          "PkgName": "busybox-binsh",
-          "PkgIdentifier": {
-            "PURL": "pkg:apk/alpine/busybox-binsh@1.37.0-r19?arch=x86_64\u0026distro=3.22.2",
-            "UID": "7150d5a240bb77cc"
-          },
-          "InstalledVersion": "1.37.0-r19",
-          "FixedVersion": "1.37.0-r20",
-          "Status": "fixed",
-          "Layer": {
-            "DiffID": "sha256:256f393e029fa2063d8c93720da36a74a032bed3355a2bc3e313ad12f8bde9d1"
-          },
-          "SeveritySource": "nvd",
-          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2025-46394",
-          "DataSource": {
-            "ID": "alpine",
-            "Name": "Alpine Secdb",
-            "URL": "https://secdb.alpinelinux.org/"
-          },
-          "Title": "In tar in BusyBox through 1.37.0, a TAR archive can have filenames hid ...",
-          "Description": "In tar in BusyBox through 1.37.0, a TAR archive can have filenames hidden from a listing through the use of terminal escape sequences.",
-          "Severity": "LOW",
-          "CweIDs": [
-            "CWE-451"
-          ],
-          "VendorSeverity": {
-            "nvd": 1,
-            "ubuntu": 2
-          },
-          "CVSS": {
-            "nvd": {
-              "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N",
-              "V3Score": 3.3
-            }
-          },
-          "References": [
-            "http://www.openwall.com/lists/oss-security/2025/04/23/5",
-            "http://www.openwall.com/lists/oss-security/2025/04/24/3",
-            "https://bugs.busybox.net/show_bug.cgi?id=16018",
-            "https://lists.busybox.net/pipermail/busybox/2024-July/090806.html",
-            "https://lists.busybox.net/pipermail/busybox/2024-July/090814.html",
-            "https://www.busybox.net",
-            "https://www.busybox.net/downloads/",
-            "https://www.cve.org/CVERecord?id=CVE-2025-46394",
-            "https://www.openwall.com/lists/oss-security/2025/04/23/1"
-          ],
-          "PublishedDate": "2025-04-23T16:15:48.713Z",
-          "LastModifiedDate": "2025-09-24T14:38:22.127Z"
-        },
-        {
-          "VulnerabilityID": "CVE-2024-58251",
-          "PkgID": "ssl_client@1.37.0-r19",
-          "PkgName": "ssl_client",
-          "PkgIdentifier": {
-            "PURL": "pkg:apk/alpine/ssl_client@1.37.0-r19?arch=x86_64\u0026distro=3.22.2",
-            "UID": "691bd1fc4de953e2"
-          },
-          "InstalledVersion": "1.37.0-r19",
-          "FixedVersion": "1.37.0-r20",
-          "Status": "fixed",
-          "Layer": {
-            "DiffID": "sha256:256f393e029fa2063d8c93720da36a74a032bed3355a2bc3e313ad12f8bde9d1"
-          },
-          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2024-58251",
-          "DataSource": {
-            "ID": "alpine",
-            "Name": "Alpine Secdb",
-            "URL": "https://secdb.alpinelinux.org/"
-          },
-          "Title": "In netstat in BusyBox through 1.37.0, local users can launch of networ ...",
-          "Description": "In netstat in BusyBox through 1.37.0, local users can launch of network application with an argv[0] containing an ANSI terminal escape sequence, leading to a denial of service (terminal locked up) when netstat is used by a victim.",
-          "Severity": "MEDIUM",
-          "CweIDs": [
-            "CWE-150"
-          ],
-          "VendorSeverity": {
-            "ubuntu": 2
-          },
-          "References": [
-            "http://www.openwall.com/lists/oss-security/2025/04/23/6",
-            "https://bugs.busybox.net/show_bug.cgi?id=15922",
-            "https://www.busybox.net",
-            "https://www.busybox.net/downloads/",
-            "https://www.cve.org/CVERecord?id=CVE-2024-58251"
-          ],
-          "PublishedDate": "2025-04-23T18:16:03.057Z",
-          "LastModifiedDate": "2025-04-29T13:52:47.47Z"
-        },
-        {
-          "VulnerabilityID": "CVE-2025-46394",
-          "PkgID": "ssl_client@1.37.0-r19",
-          "PkgName": "ssl_client",
-          "PkgIdentifier": {
-            "PURL": "pkg:apk/alpine/ssl_client@1.37.0-r19?arch=x86_64\u0026distro=3.22.2",
-            "UID": "691bd1fc4de953e2"
-          },
-          "InstalledVersion": "1.37.0-r19",
-          "FixedVersion": "1.37.0-r20",
-          "Status": "fixed",
-          "Layer": {
-            "DiffID": "sha256:256f393e029fa2063d8c93720da36a74a032bed3355a2bc3e313ad12f8bde9d1"
-          },
-          "SeveritySource": "nvd",
-          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2025-46394",
-          "DataSource": {
-            "ID": "alpine",
-            "Name": "Alpine Secdb",
-            "URL": "https://secdb.alpinelinux.org/"
-          },
-          "Title": "In tar in BusyBox through 1.37.0, a TAR archive can have filenames hid ...",
-          "Description": "In tar in BusyBox through 1.37.0, a TAR archive can have filenames hidden from a listing through the use of terminal escape sequences.",
-          "Severity": "LOW",
-          "CweIDs": [
-            "CWE-451"
-          ],
-          "VendorSeverity": {
-            "nvd": 1,
-            "ubuntu": 2
-          },
-          "CVSS": {
-            "nvd": {
-              "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N",
-              "V3Score": 3.3
-            }
-          },
-          "References": [
-            "http://www.openwall.com/lists/oss-security/2025/04/23/5",
-            "http://www.openwall.com/lists/oss-security/2025/04/24/3",
-            "https://bugs.busybox.net/show_bug.cgi?id=16018",
-            "https://lists.busybox.net/pipermail/busybox/2024-July/090806.html",
-            "https://lists.busybox.net/pipermail/busybox/2024-July/090814.html",
-            "https://www.busybox.net",
-            "https://www.busybox.net/downloads/",
-            "https://www.cve.org/CVERecord?id=CVE-2025-46394",
-            "https://www.openwall.com/lists/oss-security/2025/04/23/1"
-          ],
-          "PublishedDate": "2025-04-23T16:15:48.713Z",
-          "LastModifiedDate": "2025-09-24T14:38:22.127Z"
         }
       ]
     }

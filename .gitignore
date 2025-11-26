@@ -1,0 +1,19 @@
+# Environment files
+.env
+
+# Export directory (contains Trivy JSON reports)
+export/*.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+

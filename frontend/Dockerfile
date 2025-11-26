@@ -2,17 +2,24 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
+# Update Alpine packages for security
+RUN apk update && apk upgrade && apk add --no-cache ca-certificates
+
 # Vite, build anında VITE_* env değişkenlerini okur
 ARG VITE_API_BASE
 ENV VITE_API_BASE=${VITE_API_BASE}
 
 COPY package.json package-lock.json* ./
-RUN npm install
+RUN npm ci
 
 COPY . .
 RUN npm run build
 
 FROM nginx:alpine AS runtime
+
+# Update Alpine packages and install security updates
+RUN apk update && apk upgrade && apk add --no-cache ca-certificates && \
+    rm -rf /var/cache/apk/*
 
 COPY --from=build /app/dist /usr/share/nginx/html
 

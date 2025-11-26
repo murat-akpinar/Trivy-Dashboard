@@ -135,8 +135,8 @@ function App() {
 
   if (currentPage === 'project-detail' && projectDetails) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100">
-        <header className="border-b border-slate-800 bg-slate-900/70 backdrop-blur">
+      <div className="min-h-screen bg-catppuccin-base text-catppuccin-text">
+        <header className="border-b border-catppuccin-surface0 bg-catppuccin-mantle/70 backdrop-blur">
           <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
             <div className="flex items-center gap-2">
               <button
@@ -147,91 +147,91 @@ function App() {
                   setSelectedFilename(null);
                   setVulnDetails([]);
                 }}
-                className="text-slate-400 hover:text-slate-100 mr-2"
+                className="text-catppuccin-overlay1 hover:text-catppuccin-text mr-2"
               >
                 ← Geri
               </button>
-              <span className="rounded bg-emerald-500/10 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-400">
+              <span className="rounded bg-catppuccin-teal/10 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-catppuccin-teal">
                 {projectDetails.projectName}
               </span>
               <span className="text-lg font-semibold">Proje Detayları</span>
             </div>
-            <span className="text-xs text-slate-400">Prototype UI</span>
+            <span className="text-xs text-catppuccin-overlay1">Prototype UI</span>
           </div>
         </header>
 
         <main className="mx-auto max-w-5xl px-4 py-6 space-y-6">
           <section className="grid gap-4 md:grid-cols-4">
-            <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+            <div className="rounded-xl border border-catppuccin-surface0 bg-catppuccin-mantle/60 p-4">
+              <p className="text-xs font-medium uppercase tracking-wide text-catppuccin-overlay1">
                 Toplam Tarama
               </p>
               <p className="mt-2 text-3xl font-semibold">{projectDetails.totalScans}</p>
             </div>
-            <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+            <div className="rounded-xl border border-catppuccin-surface0 bg-catppuccin-mantle/60 p-4">
+              <p className="text-xs font-medium uppercase tracking-wide text-catppuccin-overlay1">
                 Toplam Açık
               </p>
               <p className="mt-2 text-3xl font-semibold">{projectDetails.totalVulns}</p>
             </div>
-            <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+            <div className="rounded-xl border border-catppuccin-surface0 bg-catppuccin-mantle/60 p-4">
+              <p className="text-xs font-medium uppercase tracking-wide text-catppuccin-overlay1">
                 CRITICAL
               </p>
-              <p className="mt-2 text-3xl font-semibold text-rose-400">
+              <p className="mt-2 text-3xl font-semibold text-catppuccin-red">
                 {projectDetails.severityCount['CRITICAL'] || 0}
               </p>
             </div>
-            <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-400">HIGH</p>
-              <p className="mt-2 text-3xl font-semibold text-orange-400">
+            <div className="rounded-xl border border-catppuccin-surface0 bg-catppuccin-mantle/60 p-4">
+              <p className="text-xs font-medium uppercase tracking-wide text-catppuccin-overlay1">HIGH</p>
+              <p className="mt-2 text-3xl font-semibold text-catppuccin-peach">
                 {projectDetails.severityCount['HIGH'] || 0}
               </p>
             </div>
           </section>
 
-          <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-            <h2 className="text-sm font-semibold text-slate-100 mb-4">İmajlar ve Taramalar</h2>
+          <section className="rounded-xl border border-catppuccin-surface0 bg-catppuccin-mantle/60 p-4">
+            <h2 className="text-sm font-semibold text-catppuccin-text mb-4">İmajlar ve Taramalar</h2>
 
             {projectDetails.images.length === 0 ? (
-              <div className="text-center py-8 text-slate-400">Henüz tarama bulunamadı.</div>
+              <div className="text-center py-8 text-catppuccin-overlay1">Henüz tarama bulunamadı.</div>
             ) : (
               <div className="space-y-4">
                 {projectDetails.images.map((image) => (
                   <div
                     key={image.filename}
-                    className="border border-slate-800 rounded-lg p-4 bg-slate-950/60"
+                    className="border border-catppuccin-surface0 rounded-lg p-4 bg-catppuccin-base/60"
                   >
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <h3 className="text-sm font-semibold text-slate-100">{image.imageName}</h3>
-                        <p className="text-xs text-slate-400 mt-1">
+                        <h3 className="text-sm font-semibold text-catppuccin-text">{image.imageName}</h3>
+                        <p className="text-xs text-catppuccin-overlay1 mt-1">
                           {new Date(image.modifiedAt).toLocaleString()}
                         </p>
                       </div>
                       <div className="flex items-center gap-4 text-xs">
                         <div className="text-right">
-                          <span className="text-slate-400">Toplam: </span>
-                          <span className="font-semibold text-slate-100">{image.totalVulns}</span>
+                          <span className="text-catppuccin-overlay1">Toplam: </span>
+                          <span className="font-semibold text-catppuccin-text">{image.totalVulns}</span>
                         </div>
                         <div className="flex gap-2">
                           {image.severityCount['CRITICAL'] > 0 && (
-                            <span className="text-rose-400 font-semibold">
+                            <span className="text-catppuccin-red font-semibold">
                               C:{image.severityCount['CRITICAL']}
                             </span>
                           )}
                           {image.severityCount['HIGH'] > 0 && (
-                            <span className="text-orange-400 font-semibold">
+                            <span className="text-catppuccin-peach font-semibold">
                               H:{image.severityCount['HIGH']}
                             </span>
                           )}
                           {image.severityCount['MEDIUM'] > 0 && (
-                            <span className="text-yellow-400 font-semibold">
+                            <span className="text-catppuccin-yellow font-semibold">
                               M:{image.severityCount['MEDIUM']}
                             </span>
                           )}
                           {image.severityCount['LOW'] > 0 && (
-                            <span className="text-blue-400 font-semibold">
+                            <span className="text-catppuccin-blue font-semibold">
                               L:{image.severityCount['LOW']}
                             </span>
                           )}
@@ -240,7 +240,7 @@ function App() {
                     </div>
                     <button
                       onClick={() => setSelectedFilename(image.filename)}
-                      className="text-xs px-3 py-1 rounded border border-slate-700 hover:bg-slate-800 text-slate-300"
+                      className="text-xs px-3 py-1 rounded border border-catppuccin-surface1 hover:bg-catppuccin-surface0 text-catppuccin-subtext0"
                     >
                       Açıkları Görüntüle →
                     </button>
@@ -251,23 +251,23 @@ function App() {
           </section>
 
           {selectedFilename && (
-            <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+            <section className="rounded-xl border border-catppuccin-surface0 bg-catppuccin-mantle/60 p-4">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-slate-100">
+                <h2 className="text-lg font-semibold text-catppuccin-text">
                   Açıklar: {selectedFilename}
                 </h2>
                 <button
                   onClick={() => setSelectedFilename(null)}
-                  className="px-3 py-1 text-xs rounded border border-slate-700 hover:bg-slate-800 text-slate-300"
+                  className="px-3 py-1 text-xs rounded border border-catppuccin-surface1 hover:bg-catppuccin-surface0 text-catppuccin-subtext0"
                 >
                   Kapat
                 </button>
               </div>
 
               {loadingDetails ? (
-                <div className="text-center py-8 text-slate-400">Yükleniyor...</div>
+                <div className="text-center py-8 text-catppuccin-overlay1">Yükleniyor...</div>
               ) : vulnDetails.length === 0 ? (
-                <div className="text-center py-8 text-slate-400">
+                <div className="text-center py-8 text-catppuccin-overlay1">
                   Bu raporda açık bulunamadı.
                 </div>
               ) : (
@@ -275,22 +275,22 @@ function App() {
                   {vulnDetails.map((vuln, idx) => {
                     const severityColor =
                       vuln.Severity === 'CRITICAL'
-                        ? 'text-rose-400'
+                        ? 'text-catppuccin-red'
                         : vuln.Severity === 'HIGH'
-                          ? 'text-orange-400'
+                          ? 'text-catppuccin-peach'
                           : vuln.Severity === 'MEDIUM'
-                            ? 'text-yellow-400'
+                            ? 'text-catppuccin-yellow'
                             : vuln.Severity === 'LOW'
-                              ? 'text-blue-400'
-                              : 'text-slate-400';
+                              ? 'text-catppuccin-blue'
+                              : 'text-catppuccin-overlay1';
                     return (
                       <div
                         key={`${vuln.VulnerabilityID}-${idx}`}
-                        className="border border-slate-800 rounded-lg p-4 bg-slate-950/60"
+                        className="border border-catppuccin-surface0 rounded-lg p-4 bg-catppuccin-base/60"
                       >
                         <div className="flex items-start justify-between mb-2">
                           <div>
-                            <span className="font-mono text-xs text-emerald-300">
+                            <span className="font-mono text-xs text-catppuccin-teal">
                               {vuln.VulnerabilityID}
                             </span>
                             <span className={`ml-2 text-xs font-semibold ${severityColor}`}>
@@ -302,22 +302,22 @@ function App() {
                               href={vuln.PrimaryURL}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-xs text-blue-400 hover:underline"
+                              className="text-xs text-catppuccin-blue hover:underline"
                             >
                               Detay →
                             </a>
                           )}
                         </div>
-                        <h3 className="text-sm font-semibold text-slate-100 mb-1">
+                        <h3 className="text-sm font-semibold text-catppuccin-text mb-1">
                           {vuln.Title || vuln.VulnerabilityID}
                         </h3>
-                        <div className="text-xs text-slate-400 mb-2">
+                        <div className="text-xs text-catppuccin-overlay1 mb-2">
                           <span className="font-mono">{vuln.PkgName}</span>
                           {vuln.InstalledVersion && (
                             <span className="ml-2">
                               v{vuln.InstalledVersion}
                               {vuln.FixedVersion && (
-                                <span className="text-emerald-400 ml-1">
+                                <span className="text-catppuccin-teal ml-1">
                                   → v{vuln.FixedVersion}
                                 </span>
                               )}
@@ -325,7 +325,7 @@ function App() {
                           )}
                         </div>
                         {vuln.Description && (
-                          <p className="text-xs text-slate-300 mt-2 line-clamp-3">
+                          <p className="text-xs text-catppuccin-subtext0 mt-2 line-clamp-3">
                             {vuln.Description}
                           </p>
                         )}
@@ -343,30 +343,30 @@ function App() {
 
   if (currentPage === 'projects') {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100">
-        <header className="border-b border-slate-800 bg-slate-900/70 backdrop-blur">
+      <div className="min-h-screen bg-catppuccin-base text-catppuccin-text">
+        <header className="border-b border-catppuccin-surface0 bg-catppuccin-mantle/70 backdrop-blur">
           <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentPage('dashboard')}
-                className="text-slate-400 hover:text-slate-100 mr-2"
+                className="text-catppuccin-overlay1 hover:text-catppuccin-text mr-2"
               >
                 ← Ana Sayfa
               </button>
-              <span className="rounded bg-emerald-500/10 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-400">
+              <span className="rounded bg-catppuccin-teal/10 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-catppuccin-teal">
                 Trivy
               </span>
               <span className="text-lg font-semibold">Projeler</span>
             </div>
-            <span className="text-xs text-slate-400">Prototype UI</span>
+            <span className="text-xs text-catppuccin-overlay1">Prototype UI</span>
           </div>
         </header>
 
         <main className="mx-auto max-w-5xl px-4 py-6 space-y-6">
-          <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+          <section className="rounded-xl border border-catppuccin-surface0 bg-catppuccin-mantle/60 p-4">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-semibold text-slate-100">Projeler</h2>
-              <span className="text-xs text-slate-500">
+              <h2 className="text-sm font-semibold text-catppuccin-text">Projeler</h2>
+              <span className="text-xs text-catppuccin-overlay0">
                 {filteredProjects.length} / {projects.length} proje
               </span>
             </div>
@@ -377,12 +377,12 @@ function App() {
                 placeholder="Proje ara..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border border-slate-700 bg-slate-950 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full px-4 py-2 rounded-lg border border-catppuccin-surface1 bg-catppuccin-base text-catppuccin-text placeholder-catppuccin-overlay0 focus:outline-none focus:ring-2 focus:ring-catppuccin-teal focus:border-transparent"
               />
             </div>
 
             {filteredProjects.length === 0 && !loading && !error && (
-              <div className="flex h-40 items-center justify-center text-sm text-slate-500">
+              <div className="flex h-40 items-center justify-center text-sm text-catppuccin-overlay0">
                 {searchQuery
                   ? 'Arama kriterlerine uygun proje bulunamadı.'
                   : 'Henüz proje bulunamadı. export klasörüne JSON dosyası koyduktan sonra sayfayı yenile.'}
@@ -394,7 +394,7 @@ function App() {
                 {filteredProjects.map((project) => (
                   <div
                     key={project.projectName}
-                    className="border border-slate-800 rounded-lg p-4 bg-slate-950/60 hover:bg-slate-900/40 cursor-pointer transition-colors"
+                    className="border border-catppuccin-surface0 rounded-lg p-4 bg-catppuccin-base/60 hover:bg-catppuccin-mantle/40 cursor-pointer transition-colors"
                     onClick={() => {
                       setSelectedProject(project.projectName);
                       setCurrentPage('project-detail');
@@ -402,50 +402,50 @@ function App() {
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-lg font-semibold text-slate-100">
+                        <h3 className="text-lg font-semibold text-catppuccin-text">
                           {project.projectName}
                         </h3>
-                        <p className="text-xs text-slate-400 mt-1">
+                        <p className="text-xs text-catppuccin-overlay1 mt-1">
                           {project.totalScans} tarama • Son tarama:{' '}
                           {new Date(project.lastScan).toLocaleString()}
                         </p>
                       </div>
                       <div className="flex items-center gap-4">
                         <div className="text-right">
-                          <span className="text-xs text-slate-400">Toplam Açık</span>
-                          <p className="text-2xl font-semibold text-slate-100">
+                          <span className="text-xs text-catppuccin-overlay1">Toplam Açık</span>
+                          <p className="text-2xl font-semibold text-catppuccin-text">
                             {project.totalVulns}
                           </p>
                         </div>
                         <div className="flex gap-3 text-sm">
                           {project.severityCount['CRITICAL'] > 0 && (
                             <div className="text-center">
-                              <p className="text-xs text-slate-400">CRITICAL</p>
-                              <p className="text-lg font-semibold text-rose-400">
+                              <p className="text-xs text-catppuccin-overlay1">CRITICAL</p>
+                              <p className="text-lg font-semibold text-catppuccin-red">
                                 {project.severityCount['CRITICAL']}
                               </p>
                             </div>
                           )}
                           {project.severityCount['HIGH'] > 0 && (
                             <div className="text-center">
-                              <p className="text-xs text-slate-400">HIGH</p>
-                              <p className="text-lg font-semibold text-orange-400">
+                              <p className="text-xs text-catppuccin-overlay1">HIGH</p>
+                              <p className="text-lg font-semibold text-catppuccin-peach">
                                 {project.severityCount['HIGH']}
                               </p>
                             </div>
                           )}
                           {project.severityCount['MEDIUM'] > 0 && (
                             <div className="text-center">
-                              <p className="text-xs text-slate-400">MEDIUM</p>
-                              <p className="text-lg font-semibold text-yellow-400">
+                              <p className="text-xs text-catppuccin-overlay1">MEDIUM</p>
+                              <p className="text-lg font-semibold text-catppuccin-yellow">
                                 {project.severityCount['MEDIUM']}
                               </p>
                             </div>
                           )}
                           {project.severityCount['LOW'] > 0 && (
                             <div className="text-center">
-                              <p className="text-xs text-slate-400">LOW</p>
-                              <p className="text-lg font-semibold text-blue-400">
+                              <p className="text-xs text-catppuccin-overlay1">LOW</p>
+                              <p className="text-lg font-semibold text-catppuccin-blue">
                                 {project.severityCount['LOW']}
                               </p>
                             </div>
@@ -465,11 +465,11 @@ function App() {
 
   // Dashboard page
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="border-b border-slate-800 bg-slate-900/70 backdrop-blur">
+    <div className="min-h-screen bg-catppuccin-base text-catppuccin-text">
+      <header className="border-b border-catppuccin-surface0 bg-catppuccin-mantle/70 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
-            <span className="rounded bg-emerald-500/10 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-400">
+            <span className="rounded bg-catppuccin-teal/10 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-catppuccin-teal">
               Trivy
             </span>
             <span className="text-lg font-semibold">Dashboard</span>
@@ -477,40 +477,40 @@ function App() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setCurrentPage('projects')}
-              className="px-3 py-1 text-xs rounded border border-slate-700 hover:bg-slate-800 text-slate-300"
+              className="px-3 py-1 text-xs rounded border border-catppuccin-surface1 hover:bg-catppuccin-surface0 text-catppuccin-subtext0"
             >
               Projeler →
             </button>
-            <span className="text-xs text-slate-400">Prototype UI</span>
+            <span className="text-xs text-catppuccin-overlay1">Prototype UI</span>
           </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-5xl px-4 py-6 space-y-6">
         <section className="grid gap-4 md:grid-cols-4">
-          <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          <div className="rounded-xl border border-catppuccin-surface0 bg-catppuccin-mantle/60 p-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-catppuccin-overlay1">
               Toplam Proje
             </p>
             <p className="mt-2 text-3xl font-semibold">{overallStats.totalProjects}</p>
           </div>
-          <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          <div className="rounded-xl border border-catppuccin-surface0 bg-catppuccin-mantle/60 p-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-catppuccin-overlay1">
               Toplam Tarama
             </p>
             <p className="mt-2 text-3xl font-semibold">{overallStats.totalScans}</p>
           </div>
-          <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          <div className="rounded-xl border border-catppuccin-surface0 bg-catppuccin-mantle/60 p-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-catppuccin-overlay1">
               Toplam Açık
             </p>
             <p className="mt-2 text-3xl font-semibold">{overallStats.totalVulns}</p>
           </div>
-          <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          <div className="rounded-xl border border-catppuccin-surface0 bg-catppuccin-mantle/60 p-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-catppuccin-overlay1">
               Backend URL
             </p>
-            <p className="mt-2 text-xs text-slate-300 break-all">
+            <p className="mt-2 text-xs text-catppuccin-subtext0 break-all">
               {API_BASE || 'Tanımlı değil'}
             </p>
           </div>
@@ -520,101 +520,101 @@ function App() {
           <div
             className={`rounded-xl border p-4 cursor-pointer transition-all ${
               selectedSeverity === 'CRITICAL'
-                ? 'border-rose-500 bg-rose-500/10'
-                : 'border-slate-800 bg-slate-900/60 hover:bg-slate-900/80'
+                ? 'border-catppuccin-red bg-catppuccin-red/10'
+                : 'border-catppuccin-surface0 bg-catppuccin-mantle/60 hover:bg-catppuccin-mantle/80'
             }`}
             onClick={() =>
               setSelectedSeverity(selectedSeverity === 'CRITICAL' ? null : 'CRITICAL')
             }
           >
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+            <p className="text-xs font-medium uppercase tracking-wide text-catppuccin-overlay1">
               CRITICAL
             </p>
-            <p className="mt-2 text-3xl font-semibold text-rose-400">
+            <p className="mt-2 text-3xl font-semibold text-catppuccin-red">
               {overallStats.severityCount['CRITICAL'] || 0}
             </p>
             {selectedSeverity === 'CRITICAL' && (
-              <p className="mt-1 text-xs text-rose-400">Tıklayarak kapat</p>
+              <p className="mt-1 text-xs text-catppuccin-red">Tıklayarak kapat</p>
             )}
           </div>
           <div
             className={`rounded-xl border p-4 cursor-pointer transition-all ${
               selectedSeverity === 'HIGH'
-                ? 'border-orange-500 bg-orange-500/10'
-                : 'border-slate-800 bg-slate-900/60 hover:bg-slate-900/80'
+                ? 'border-catppuccin-peach bg-catppuccin-peach/10'
+                : 'border-catppuccin-surface0 bg-catppuccin-mantle/60 hover:bg-catppuccin-mantle/80'
             }`}
             onClick={() => setSelectedSeverity(selectedSeverity === 'HIGH' ? null : 'HIGH')}
           >
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">HIGH</p>
-            <p className="mt-2 text-3xl font-semibold text-orange-400">
+            <p className="text-xs font-medium uppercase tracking-wide text-catppuccin-overlay1">HIGH</p>
+            <p className="mt-2 text-3xl font-semibold text-catppuccin-peach">
               {overallStats.severityCount['HIGH'] || 0}
             </p>
             {selectedSeverity === 'HIGH' && (
-              <p className="mt-1 text-xs text-orange-400">Tıklayarak kapat</p>
+              <p className="mt-1 text-xs text-catppuccin-peach">Tıklayarak kapat</p>
             )}
           </div>
           <div
             className={`rounded-xl border p-4 cursor-pointer transition-all ${
               selectedSeverity === 'MEDIUM'
-                ? 'border-yellow-500 bg-yellow-500/10'
-                : 'border-slate-800 bg-slate-900/60 hover:bg-slate-900/80'
+                ? 'border-catppuccin-yellow bg-catppuccin-yellow/10'
+                : 'border-catppuccin-surface0 bg-catppuccin-mantle/60 hover:bg-catppuccin-mantle/80'
             }`}
             onClick={() => setSelectedSeverity(selectedSeverity === 'MEDIUM' ? null : 'MEDIUM')}
           >
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">MEDIUM</p>
-            <p className="mt-2 text-3xl font-semibold text-yellow-400">
+            <p className="text-xs font-medium uppercase tracking-wide text-catppuccin-overlay1">MEDIUM</p>
+            <p className="mt-2 text-3xl font-semibold text-catppuccin-yellow">
               {overallStats.severityCount['MEDIUM'] || 0}
             </p>
             {selectedSeverity === 'MEDIUM' && (
-              <p className="mt-1 text-xs text-yellow-400">Tıklayarak kapat</p>
+              <p className="mt-1 text-xs text-catppuccin-yellow">Tıklayarak kapat</p>
             )}
           </div>
           <div
             className={`rounded-xl border p-4 cursor-pointer transition-all ${
               selectedSeverity === 'LOW'
-                ? 'border-blue-500 bg-blue-500/10'
-                : 'border-slate-800 bg-slate-900/60 hover:bg-slate-900/80'
+                ? 'border-catppuccin-blue bg-catppuccin-blue/10'
+                : 'border-catppuccin-surface0 bg-catppuccin-mantle/60 hover:bg-catppuccin-mantle/80'
             }`}
             onClick={() => setSelectedSeverity(selectedSeverity === 'LOW' ? null : 'LOW')}
           >
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">LOW</p>
-            <p className="mt-2 text-3xl font-semibold text-blue-400">
+            <p className="text-xs font-medium uppercase tracking-wide text-catppuccin-overlay1">LOW</p>
+            <p className="mt-2 text-3xl font-semibold text-catppuccin-blue">
               {overallStats.severityCount['LOW'] || 0}
             </p>
             {selectedSeverity === 'LOW' && (
-              <p className="mt-1 text-xs text-blue-400">Tıklayarak kapat</p>
+              <p className="mt-1 text-xs text-catppuccin-blue">Tıklayarak kapat</p>
             )}
           </div>
         </section>
 
-        <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+        <section className="rounded-xl border border-catppuccin-surface0 bg-catppuccin-mantle/60 p-4">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-slate-100">Genel Özet</h2>
-            <span className="text-xs text-slate-500">
+            <h2 className="text-sm font-semibold text-catppuccin-text">Genel Özet</h2>
+            <span className="text-xs text-catppuccin-overlay0">
               Tüm projelerin toplam istatistikleri
             </span>
           </div>
 
-          <div className="text-sm text-slate-300 space-y-2">
+          <div className="text-sm text-catppuccin-subtext0 space-y-2">
             <p>
-              <span className="text-slate-400">Durum:</span>{' '}
+              <span className="text-catppuccin-overlay1">Durum:</span>{' '}
               {loading ? 'Yükleniyor...' : error ? `Hata: ${error}` : 'Hazır'}
             </p>
             <p>
-              <span className="text-slate-400">Toplam Proje:</span> {overallStats.totalProjects}
+              <span className="text-catppuccin-overlay1">Toplam Proje:</span> {overallStats.totalProjects}
             </p>
             <p>
-              <span className="text-slate-400">Toplam Tarama:</span> {overallStats.totalScans}
+              <span className="text-catppuccin-overlay1">Toplam Tarama:</span> {overallStats.totalScans}
             </p>
             <p>
-              <span className="text-slate-400">Toplam Açık:</span> {overallStats.totalVulns}
+              <span className="text-catppuccin-overlay1">Toplam Açık:</span> {overallStats.totalVulns}
             </p>
           </div>
 
           <div className="mt-4">
             <button
               onClick={() => setCurrentPage('projects')}
-              className="px-4 py-2 rounded-lg border border-emerald-700 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-medium transition-colors"
+              className="px-4 py-2 rounded-lg border border-catppuccin-teal bg-catppuccin-teal/10 hover:bg-catppuccin-teal/20 text-catppuccin-teal font-medium transition-colors"
             >
               Tüm Projeleri Görüntüle →
             </button>
@@ -622,14 +622,14 @@ function App() {
         </section>
 
         {selectedSeverity && projectsBySeverity.length > 0 && (
-          <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+          <section className="rounded-xl border border-catppuccin-surface0 bg-catppuccin-mantle/60 p-4">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-semibold text-slate-100">
+              <h2 className="text-sm font-semibold text-catppuccin-text">
                 {selectedSeverity} Severity'ye Sahip Projeler ({projectsBySeverity.length})
               </h2>
               <button
                 onClick={() => setSelectedSeverity(null)}
-                className="px-3 py-1 text-xs rounded border border-slate-700 hover:bg-slate-800 text-slate-300"
+                className="px-3 py-1 text-xs rounded border border-catppuccin-surface1 hover:bg-catppuccin-surface0 text-catppuccin-subtext0"
               >
                 Kapat
               </button>
@@ -639,7 +639,7 @@ function App() {
               {projectsBySeverity.map((project) => (
                 <div
                   key={project.projectName}
-                  className="border border-slate-800 rounded-lg p-4 bg-slate-950/60 hover:bg-slate-900/40 cursor-pointer transition-colors"
+                  className="border border-catppuccin-surface0 rounded-lg p-4 bg-catppuccin-base/60 hover:bg-catppuccin-mantle/40 cursor-pointer transition-colors"
                   onClick={() => {
                     setSelectedProject(project.projectName);
                     setCurrentPage('project-detail');
@@ -647,50 +647,50 @@ function App() {
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-lg font-semibold text-slate-100">
+                      <h3 className="text-lg font-semibold text-catppuccin-text">
                         {project.projectName}
                       </h3>
-                      <p className="text-xs text-slate-400 mt-1">
+                      <p className="text-xs text-catppuccin-overlay1 mt-1">
                         {project.totalScans} tarama • Son tarama:{' '}
                         {new Date(project.lastScan).toLocaleString()}
                       </p>
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="text-right">
-                        <span className="text-xs text-slate-400">Toplam Açık</span>
-                        <p className="text-2xl font-semibold text-slate-100">
+                        <span className="text-xs text-catppuccin-overlay1">Toplam Açık</span>
+                        <p className="text-2xl font-semibold text-catppuccin-text">
                           {project.totalVulns}
                         </p>
                       </div>
                       <div className="flex gap-3 text-sm">
                         {project.severityCount['CRITICAL'] > 0 && (
                           <div className="text-center">
-                            <p className="text-xs text-slate-400">CRITICAL</p>
-                            <p className="text-lg font-semibold text-rose-400">
+                            <p className="text-xs text-catppuccin-overlay1">CRITICAL</p>
+                            <p className="text-lg font-semibold text-catppuccin-red">
                               {project.severityCount['CRITICAL']}
                             </p>
                           </div>
                         )}
                         {project.severityCount['HIGH'] > 0 && (
                           <div className="text-center">
-                            <p className="text-xs text-slate-400">HIGH</p>
-                            <p className="text-lg font-semibold text-orange-400">
+                            <p className="text-xs text-catppuccin-overlay1">HIGH</p>
+                            <p className="text-lg font-semibold text-catppuccin-peach">
                               {project.severityCount['HIGH']}
                             </p>
                           </div>
                         )}
                         {project.severityCount['MEDIUM'] > 0 && (
                           <div className="text-center">
-                            <p className="text-xs text-slate-400">MEDIUM</p>
-                            <p className="text-lg font-semibold text-yellow-400">
+                            <p className="text-xs text-catppuccin-overlay1">MEDIUM</p>
+                            <p className="text-lg font-semibold text-catppuccin-yellow">
                               {project.severityCount['MEDIUM']}
                             </p>
                           </div>
                         )}
                         {project.severityCount['LOW'] > 0 && (
                           <div className="text-center">
-                            <p className="text-xs text-slate-400">LOW</p>
-                            <p className="text-lg font-semibold text-blue-400">
+                            <p className="text-xs text-catppuccin-overlay1">LOW</p>
+                            <p className="text-lg font-semibold text-catppuccin-blue">
                               {project.severityCount['LOW']}
                             </p>
                           </div>
@@ -705,19 +705,19 @@ function App() {
         )}
 
         {selectedSeverity && projectsBySeverity.length === 0 && (
-          <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+          <section className="rounded-xl border border-catppuccin-surface0 bg-catppuccin-mantle/60 p-4">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-semibold text-slate-100">
+              <h2 className="text-sm font-semibold text-catppuccin-text">
                 {selectedSeverity} Severity'ye Sahip Projeler
               </h2>
               <button
                 onClick={() => setSelectedSeverity(null)}
-                className="px-3 py-1 text-xs rounded border border-slate-700 hover:bg-slate-800 text-slate-300"
+                className="px-3 py-1 text-xs rounded border border-catppuccin-surface1 hover:bg-catppuccin-surface0 text-catppuccin-subtext0"
               >
                 Kapat
               </button>
             </div>
-            <div className="text-center py-8 text-slate-400">
+            <div className="text-center py-8 text-catppuccin-overlay1">
               {selectedSeverity} severity'sine sahip proje bulunamadı.
             </div>
           </section>

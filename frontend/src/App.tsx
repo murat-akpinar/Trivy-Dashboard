@@ -1,5 +1,18 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Legend,
+  Tooltip,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  TooltipProps,
+} from 'recharts';
 
 type ProjectSummary = {
   projectName: string;
@@ -70,6 +83,38 @@ function calculateGrade(severityCount: Record<string, number>): { grade: string;
   // Grade D: High critical or too many issues
   return { grade: 'D', color: 'catppuccin-red' };
 }
+
+// Custom tooltip for the unified timeline chart: show only series that have numeric value at this point
+const TimelineTooltip: React.FC<TooltipProps<number, string>> = ({ active, payload, label }) => {
+  if (!active || !payload || !payload.length) return null;
+
+  // Only show series which have a numeric value at this point (skip null/undefined)
+  const visible = payload.filter((item) => typeof item.value === 'number');
+  if (!visible.length) return null;
+
+  return (
+    <div
+      style={{
+        backgroundColor: '#1e1e2e',
+        border: '1px solid #313244',
+        borderRadius: 8,
+        padding: '8px 12px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+        pointerEvents: 'none',
+      }}
+    >
+      <div style={{ fontSize: 12, marginBottom: 4, color: '#cdd6f4' }}>{label}</div>
+      {visible.map((item) => (
+        <div key={String(item.dataKey)} style={{ fontSize: 12, color: item.color || '#cdd6f4' }}>
+          <span>{item.name}</span>
+          {': '}
+          <strong>{item.value}</strong>
+          <span> açık</span>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 function App() {
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
@@ -213,18 +258,53 @@ function App() {
   const overallStats = useMemo(() => {
     const totalProjects = projects.length;
     const totalScans = projects.reduce((sum, p) => sum + p.totalScans, 0);
+
+    // En güncel açık sayılarını, her proje için her imajın "son taraması"na göre hesapla
+    type LatestProjectStats = {
+      totalVulns: number;
+      severityCount: Record<string, number>;
+    };
+
+    const projectImageLatestScan: Record<string, Record<string, ScanSummary>> = {};
+
+    allScans.forEach((scan) => {
+      if (!scan.projectName || !scan.imageName) return;
+      const proj = scan.projectName;
+      const img = scan.imageName;
+
+      if (!projectImageLatestScan[proj]) {
+        projectImageLatestScan[proj] = {};
+      }
+
+      const existing = projectImageLatestScan[proj][img];
+      if (
+        !existing ||
+        new Date(scan.modifiedAt).getTime() > new Date(existing.modifiedAt).getTime()
+      ) {
+        projectImageLatestScan[proj][img] = scan;
+      }
+    });
+
     const severityCount: Record<string, number> = {};
     let totalVulns = 0;
 
     projects.forEach((p) => {
-      totalVulns += p.totalVulns;
-      Object.keys(p.severityCount).forEach((severity) => {
-        severityCount[severity] = (severityCount[severity] || 0) + p.severityCount[severity];
+      const perImage = projectImageLatestScan[p.projectName];
+      if (!perImage) {
+        return;
+      }
+
+      Object.values(perImage).forEach((scan) => {
+        totalVulns += scan.totalVulns;
+        Object.keys(scan.severityCount).forEach((severity) => {
+          severityCount[severity] =
+            (severityCount[severity] || 0) + scan.severityCount[severity];
+        });
       });
     });
 
     return { totalProjects, totalScans, totalVulns, severityCount };
-  }, [projects]);
+  }, [projects, allScans]);
 
   // Filter projects based on search query
   const filteredProjects = useMemo(() => {
@@ -236,8 +316,38 @@ function App() {
   // Filter projects by selected severity (for dashboard)
   const projectsBySeverity = useMemo(() => {
     if (!selectedSeverity) return [];
-    return projects.filter((p) => (p.severityCount[selectedSeverity] || 0) > 0);
-  }, [projects, selectedSeverity]);
+
+    // Her proje için en son taramalardan severity hesaplamak için overallStats'taki aynı yapıyı kullan
+    const projectImageLatestScan: Record<string, Record<string, ScanSummary>> = {};
+
+    allScans.forEach((scan) => {
+      if (!scan.projectName || !scan.imageName) return;
+      const proj = scan.projectName;
+      const img = scan.imageName;
+
+      if (!projectImageLatestScan[proj]) {
+        projectImageLatestScan[proj] = {};
+      }
+      const existing = projectImageLatestScan[proj][img];
+      if (
+        !existing ||
+        new Date(scan.modifiedAt).getTime() > new Date(existing.modifiedAt).getTime()
+      ) {
+        projectImageLatestScan[proj][img] = scan;
+      }
+    });
+
+    return projects.filter((p) => {
+      const perImage = projectImageLatestScan[p.projectName];
+      if (!perImage) return false;
+
+      let totalForSeverity = 0;
+      Object.values(perImage).forEach((scan) => {
+        totalForSeverity += scan.severityCount[selectedSeverity] || 0;
+      });
+      return totalForSeverity > 0;
+    });
+  }, [projects, selectedSeverity, allScans]);
 
   // Prepare pie chart data for severity distribution
   const pieChartData = useMemo(() => {
@@ -250,11 +360,23 @@ function App() {
     return data;
   }, [overallStats.severityCount]);
 
-  // Prepare unified timeline chart data with all projects (different colors) - showing vulnerability count
-  // Each scan is shown as a separate point to see the trend over time
+  // Prepare unified timeline chart data
+  // Her satır "Proje - İmaj" ikilisi olacak şekilde ayrıştırılır,
+  // her tarama ayrı bir nokta olarak gösterilir (iniş/çıkışları görebilmek için).
   const unifiedTimelineData = useMemo(() => {
-    // Get unique project names and assign colors
-    const projectNames = Array.from(new Set(allScans.map(s => s.projectName).filter(Boolean)));
+    // Get unique series names (project-image)
+    const seriesNames = Array.from(
+      new Set(
+        allScans
+          .filter((s) => s.projectName)
+          .map((s) => {
+            if (s.imageName) {
+              return `${s.projectName} - ${s.imageName}`;
+            }
+            return s.projectName as string;
+          })
+      )
+    );
     const projectColors = [
       '#89b4fa', // blue
       '#f38ba8', // red
@@ -265,50 +387,118 @@ function App() {
       '#94e2d5', // teal
       '#f5c2e7', // pink
     ];
-    
-    // Sort all scans by date (oldest first)
-    const sortedScans = [...allScans].sort((a, b) => 
-      new Date(a.modifiedAt).getTime() - new Date(b.modifiedAt).getTime()
+
+    if (allScans.length === 0 || seriesNames.length === 0) {
+      return { data: [], projectNames: seriesNames, projectColors };
+    }
+
+    // Zaman içinde tüm taramaları, tarih+saat bazlı noktalara dönüştür
+    const sortedScans = [...allScans].sort(
+      (a, b) => new Date(a.modifiedAt).getTime() - new Date(b.modifiedAt).getTime()
     );
-    
-    // Build data structure: Each scan becomes a data point
-    // Format: { date: "26 Kas 2025, 22:09", project1: vulnCount or null, project2: vulnCount or null, ... }
+
+    // Aynı zaman damgasına sahip çoklu taramalar için birleştirme yap
     const dataMap = new Map<string, Record<string, string | number | null>>();
-    
-    sortedScans.forEach(scan => {
-      const date = new Date(scan.modifiedAt);
-      // Format: "26 Kas 2025, 22:09" for better readability
-      const timestamp = date.toLocaleString('tr-TR', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-      
-      if (!dataMap.has(timestamp)) {
-        const entry: Record<string, string | number | null> = { date: timestamp };
-        projectNames.forEach(name => {
-          entry[name] = null; // Initialize as null
+
+    sortedScans.forEach((scan) => {
+      if (!scan.projectName) return;
+
+      const seriesKey = scan.imageName
+        ? `${scan.projectName} - ${scan.imageName}`
+        : (scan.projectName as string);
+
+      const d = new Date(scan.modifiedAt);
+      const key = d.toISOString(); // benzersiz zaman damgası
+
+      if (!dataMap.has(key)) {
+        const entry: Record<string, string | number | null> = {
+          date: d.toLocaleString('tr-TR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+        };
+        // Her seri için başlangıçta null ver (sadece veri olan seriler tooltip'te görünsün)
+        seriesNames.forEach((name) => {
+          entry[name] = null;
         });
-        dataMap.set(timestamp, entry);
+        dataMap.set(key, entry);
       }
-      
-      const entry = dataMap.get(timestamp)!;
-      if (scan.projectName) {
-        entry[scan.projectName] = scan.totalVulns;
-      }
+
+      const entry = dataMap.get(key)!;
+      entry[seriesKey] = scan.totalVulns;
     });
-    
-    // Convert map to array and sort by date
-    const data = Array.from(dataMap.values()).sort((a, b) => {
-      const dateA = new Date(a.date as string);
-      const dateB = new Date(b.date as string);
-      return dateA.getTime() - dateB.getTime();
-    });
-    
-    return { data, projectNames, projectColors };
+
+    const data = Array.from(dataMap.entries())
+      .sort(([a], [b]) => (a < b ? -1 : 1))
+      .map(([, value]) => value);
+
+    return { data, projectNames: seriesNames, projectColors };
   }, [allScans]);
+
+  // Project-specific timeline data (only for selected project on detail page)
+  const projectTimelineData = useMemo(() => {
+    if (!selectedProject) {
+      return { data: [], seriesNames: [] as string[] };
+    }
+
+    const projectScans = allScans.filter((s) => s.projectName === selectedProject);
+    if (projectScans.length === 0) {
+      return { data: [], seriesNames: [] as string[] };
+    }
+
+    const seriesNames = Array.from(
+      new Set(
+        projectScans.map((s) =>
+          s.imageName ? `${s.projectName} - ${s.imageName}` : (s.projectName as string)
+        )
+      )
+    );
+
+    // Zaman içinde bu projeye ait tüm taramaları noktaya dönüştür
+    const sortedScans = [...projectScans].sort(
+      (a, b) => new Date(a.modifiedAt).getTime() - new Date(b.modifiedAt).getTime()
+    );
+
+    const dataMap = new Map<string, Record<string, string | number | null>>();
+
+    sortedScans.forEach((scan) => {
+      const seriesKey = scan.imageName
+        ? `${scan.projectName} - ${scan.imageName}`
+        : (scan.projectName as string);
+
+      const d = new Date(scan.modifiedAt);
+      const key = d.toISOString();
+
+      if (!dataMap.has(key)) {
+        const entry: Record<string, string | number | null> = {
+          date: d.toLocaleString('tr-TR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+        };
+        // Başlangıçta tüm seriler için null verelim; sadece o anda taraması olan seriler çizilsin
+        seriesNames.forEach((name) => {
+          entry[name] = null;
+        });
+        dataMap.set(key, entry);
+      }
+
+      const entry = dataMap.get(key)!;
+      entry[seriesKey] = scan.totalVulns;
+    });
+
+    const data = Array.from(dataMap.entries())
+      .sort(([a], [b]) => (a < b ? -1 : 1))
+      .map(([, value]) => value);
+
+    return { data, seriesNames };
+  }, [allScans, selectedProject]);
 
   if (currentPage === 'project-detail' && projectDetails) {
     return (
@@ -382,6 +572,84 @@ function App() {
                 {projectDetails.severityCount['HIGH'] || 0}
               </p>
             </div>
+          </section>
+
+          {/* Project-specific timeline chart */}
+          <section className="rounded-xl border border-catppuccin-surface0 bg-catppuccin-mantle/60 p-4">
+            <h2 className="text-sm font-semibold text-catppuccin-text mb-4">
+              {projectDetails.projectName} – Açık Sayısı Zaman Çizelgesi
+            </h2>
+            {projectTimelineData.data.length > 0 ? (
+              <>
+                <ResponsiveContainer width="100%" height={260}>
+                  <LineChart data={projectTimelineData.data}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#313244" />
+                    <XAxis
+                      dataKey="date"
+                      stroke="#6c7086"
+                      style={{ fontSize: '10px' }}
+                      angle={-35}
+                      textAnchor="end"
+                      height={70}
+                    />
+                    <YAxis
+                      stroke="#6c7086"
+                      style={{ fontSize: '11px' }}
+                      label={{
+                        value: 'Açık Sayısı',
+                        angle: -90,
+                        position: 'insideLeft',
+                        style: { fontSize: '11px', fill: '#6c7086' },
+                      }}
+                    />
+                    <Tooltip content={<TimelineTooltip />} />
+                    {projectTimelineData.seriesNames.map((seriesName, index) => (
+                      <Line
+                        key={seriesName}
+                        type="monotone"
+                        dataKey={seriesName}
+                        stroke={
+                          unifiedTimelineData.projectColors[
+                            index % unifiedTimelineData.projectColors.length
+                          ]
+                        }
+                        strokeWidth={2}
+                        dot={{
+                          fill:
+                            unifiedTimelineData.projectColors[
+                              index % unifiedTimelineData.projectColors.length
+                            ],
+                          r: 4,
+                        }}
+                        activeDot={{ r: 6 }}
+                        connectNulls
+                        name={seriesName}
+                      />
+                    ))}
+                  </LineChart>
+                </ResponsiveContainer>
+                <div className="mt-3 flex flex-wrap gap-3 text-xs text-catppuccin-overlay1">
+                  {projectTimelineData.seriesNames.map((seriesName, index) => (
+                    <div key={seriesName} className="flex items-center gap-2">
+                      <div
+                        className="w-3 h-3 rounded"
+                        style={{
+                          backgroundColor:
+                            unifiedTimelineData.projectColors[
+                              index % unifiedTimelineData.projectColors.length
+                            ],
+                        }}
+                      ></div>
+                      <span>{seriesName}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center justify-center h-[260px] text-catppuccin-overlay1 text-sm">
+                Bu proje için henüz zaman çizelgesi oluşturulacak tarama verisi yok.
+              </div>
+            )}
           </section>
 
           <section className="rounded-xl border border-catppuccin-surface0 bg-catppuccin-mantle/60 p-4">
@@ -714,70 +982,96 @@ function App() {
 
             {filteredProjects.length > 0 && (
               <div className="space-y-3">
-                {filteredProjects.map((project) => (
-                  <div
-                    key={project.projectName}
-                    className="border border-catppuccin-surface0 rounded-lg p-4 bg-catppuccin-base/60 hover:bg-catppuccin-mantle/40 cursor-pointer transition-colors"
-                    onClick={() => {
-                      setSelectedProject(project.projectName);
-                      setCurrentPage('project-detail');
-                    }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-lg font-semibold text-catppuccin-text">
-                          {project.projectName}
-                        </h3>
-                        <p className="text-xs text-catppuccin-overlay1 mt-1">
-                          {project.totalScans} tarama • Son tarama:{' '}
-                          {new Date(project.lastScan).toLocaleString()}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <div className="text-right">
-                          <span className="text-xs text-catppuccin-overlay1">Toplam Açık</span>
-                          <p className="text-2xl font-semibold text-catppuccin-text">
-                            {project.totalVulns}
+                {filteredProjects.map((project) => {
+                  // Bu projedeki her imajın en son taramalarını allScans üzerinden bul
+                  const perImage: Record<string, ScanSummary> = {};
+                  allScans.forEach((scan) => {
+                    if (scan.projectName !== project.projectName || !scan.imageName) return;
+                    const existing = perImage[scan.imageName];
+                    if (
+                      !existing ||
+                      new Date(scan.modifiedAt).getTime() >
+                        new Date(existing.modifiedAt).getTime()
+                    ) {
+                      perImage[scan.imageName] = scan;
+                    }
+                  });
+
+                  let latestTotalVulns = 0;
+                  const latestSeverity: Record<string, number> = {};
+                  Object.values(perImage).forEach((scan) => {
+                    latestTotalVulns += scan.totalVulns;
+                    Object.keys(scan.severityCount).forEach((severity) => {
+                      latestSeverity[severity] =
+                        (latestSeverity[severity] || 0) + scan.severityCount[severity];
+                    });
+                  });
+
+                  return (
+                    <div
+                      key={project.projectName}
+                      className="border border-catppuccin-surface0 rounded-lg p-4 bg-catppuccin-base/60 hover:bg-catppuccin-mantle/40 cursor-pointer transition-colors"
+                      onClick={() => {
+                        setSelectedProject(project.projectName);
+                        setCurrentPage('project-detail');
+                      }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-lg font-semibold text-catppuccin-text">
+                            {project.projectName}
+                          </h3>
+                          <p className="text-xs text-catppuccin-overlay1 mt-1">
+                            {project.totalScans} tarama • Son tarama:{' '}
+                            {new Date(project.lastScan).toLocaleString()}
                           </p>
                         </div>
-                        <div className="flex gap-3 text-sm">
-                          {project.severityCount['CRITICAL'] > 0 && (
-                            <div className="text-center">
-                              <p className="text-xs text-catppuccin-overlay1">CRITICAL</p>
-                              <p className="text-lg font-semibold text-catppuccin-red">
-                                {project.severityCount['CRITICAL']}
-                              </p>
-                            </div>
-                          )}
-                          {project.severityCount['HIGH'] > 0 && (
-                            <div className="text-center">
-                              <p className="text-xs text-catppuccin-overlay1">HIGH</p>
-                              <p className="text-lg font-semibold text-catppuccin-peach">
-                                {project.severityCount['HIGH']}
-                              </p>
-                            </div>
-                          )}
-                          {project.severityCount['MEDIUM'] > 0 && (
-                            <div className="text-center">
-                              <p className="text-xs text-catppuccin-overlay1">MEDIUM</p>
-                              <p className="text-lg font-semibold text-catppuccin-yellow">
-                                {project.severityCount['MEDIUM']}
-                              </p>
-                            </div>
-                          )}
-                          {project.severityCount['LOW'] > 0 && (
-                            <div className="text-center">
-                              <p className="text-xs text-catppuccin-overlay1">LOW</p>
-                              <p className="text-lg font-semibold text-catppuccin-blue">
-                                {project.severityCount['LOW']}
-                              </p>
-                            </div>
-                          )}
+                        <div className="flex items-center gap-4">
+                          <div className="text-right">
+                            <span className="text-xs text-catppuccin-overlay1">Toplam Açık</span>
+                            <p className="text-2xl font-semibold text-catppuccin-text">
+                              {latestTotalVulns}
+                            </p>
+                          </div>
+                          <div className="flex gap-3 text-sm">
+                            {latestSeverity['CRITICAL'] > 0 && (
+                              <div className="text-center">
+                                <p className="text-xs text-catppuccin-overlay1">CRITICAL</p>
+                                <p className="text-lg font-semibold text-catppuccin-red">
+                                  {latestSeverity['CRITICAL']}
+                                </p>
+                              </div>
+                            )}
+                            {latestSeverity['HIGH'] > 0 && (
+                              <div className="text-center">
+                                <p className="text-xs text-catppuccin-overlay1">HIGH</p>
+                                <p className="text-lg font-semibold text-catppuccin-peach">
+                                  {latestSeverity['HIGH']}
+                                </p>
+                              </div>
+                            )}
+                            {latestSeverity['MEDIUM'] > 0 && (
+                              <div className="text-center">
+                                <p className="text-xs text-catppuccin-overlay1">MEDIUM</p>
+                                <p className="text-lg font-semibold text-catppuccin-yellow">
+                                  {latestSeverity['MEDIUM']}
+                                </p>
+                              </div>
+                            )}
+                            {latestSeverity['LOW'] > 0 && (
+                              <div className="text-center">
+                                <p className="text-xs text-catppuccin-overlay1">LOW</p>
+                                <p className="text-lg font-semibold text-catppuccin-blue">
+                                  {latestSeverity['LOW']}
+                                </p>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </section>
@@ -946,17 +1240,19 @@ function App() {
 
           {/* Unified Timeline Chart - All Projects */}
           <div className="rounded-xl border border-catppuccin-surface0 bg-catppuccin-mantle/60 p-4">
-            <h2 className="text-sm font-semibold text-catppuccin-text mb-4">Tüm Projeler - Açık Sayısı Zaman Çizelgesi</h2>
+            <h2 className="text-sm font-semibold text-catppuccin-text mb-4">
+              Tüm Projeler - Günlük Açık Sayısı Zaman Çizelgesi
+            </h2>
             {unifiedTimelineData.data.length > 0 ? (
               <>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={unifiedTimelineData.data}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#313244" />
-                    <XAxis 
-                      dataKey="date" 
+                    <XAxis
+                      dataKey="date"
                       stroke="#6c7086"
                       style={{ fontSize: '10px' }}
-                      angle={-45}
+                      angle={-35}
                       textAnchor="end"
                       height={80}
                     />
@@ -965,27 +1261,27 @@ function App() {
                       style={{ fontSize: '11px' }}
                       label={{ value: 'Açık Sayısı', angle: -90, position: 'insideLeft', style: { fontSize: '11px', fill: '#6c7086' } }}
                     />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: '#1e1e2e', 
-                        border: '1px solid #313244',
-                        borderRadius: '8px',
-                        color: '#cdd6f4'
-                      }}
-                      formatter={(value: number, name: string) => {
-                        return [`${value} açık`, name];
-                      }}
-                    />
+                    <Tooltip content={<TimelineTooltip />} />
                     {unifiedTimelineData.projectNames.map((projectName, index) => (
-                      <Line 
+                      <Line
                         key={projectName}
-                        type="monotone" 
-                        dataKey={projectName} 
-                        stroke={unifiedTimelineData.projectColors[index % unifiedTimelineData.projectColors.length]} 
+                        type="monotone"
+                        dataKey={projectName}
+                        stroke={
+                          unifiedTimelineData.projectColors[
+                            index % unifiedTimelineData.projectColors.length
+                          ]
+                        }
                         strokeWidth={2}
-                        dot={{ fill: unifiedTimelineData.projectColors[index % unifiedTimelineData.projectColors.length], r: 4 }}
+                        dot={{
+                          fill:
+                            unifiedTimelineData.projectColors[
+                              index % unifiedTimelineData.projectColors.length
+                            ],
+                          r: 4,
+                        }}
                         activeDot={{ r: 6 }}
-                        connectNulls={false}
+                        connectNulls
                         name={projectName}
                       />
                     ))}
@@ -1083,6 +1379,7 @@ function App() {
                       <div className="text-right">
                         <span className="text-xs text-catppuccin-overlay1">Toplam Açık</span>
                         <p className="text-2xl font-semibold text-catppuccin-text">
+                          {/* Seçili severity listesinde de son taramalara göre toplam açık gösterilir */}
                           {project.totalVulns}
                         </p>
                       </div>

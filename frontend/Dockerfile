@@ -9,10 +9,17 @@ RUN apk update && apk upgrade && apk add --no-cache ca-certificates
 ARG VITE_API_BASE
 ENV VITE_API_BASE=${VITE_API_BASE}
 
+# Sadece gerekli dosyaları kopyala; host'taki node_modules'u içeri taşımayın
 COPY package.json package-lock.json* ./
-RUN npm ci
 
-COPY . .
+# Build aşamasında Vite gibi devDependencies'in de kurulmasını sağla
+RUN npm ci --include=dev
+
+COPY tsconfig.json vite.config.ts tailwind.config.ts postcss.config.cjs ./
+COPY index.html ./
+COPY public ./public
+COPY src ./src
+
 RUN npm run build
 
 FROM nginx:alpine AS runtime

@@ -209,32 +209,22 @@ function App() {
     });
   }, [expandedImages, API_BASE, projectDetails]);
 
-  // Calculate overall statistics - severity from latest scans only
+  // Calculate overall statistics - aggregate from backend project summaries
   const overallStats = useMemo(() => {
     const totalProjects = projects.length;
     const totalScans = projects.reduce((sum, p) => sum + p.totalScans, 0);
-    
-    // Calculate severity from latest scans only (for each project, get the latest scan)
     const severityCount: Record<string, number> = {};
     let totalVulns = 0;
-    
+
     projects.forEach((p) => {
-      // Get latest scan for this project (from allScans)
-      const projectScans = allScans
-        .filter(s => s.projectName === p.projectName)
-        .sort((a, b) => new Date(b.modifiedAt).getTime() - new Date(a.modifiedAt).getTime());
-      
-      if (projectScans.length > 0) {
-        const latestScan = projectScans[0];
-        totalVulns += latestScan.totalVulns;
-        Object.keys(latestScan.severityCount).forEach((severity) => {
-          severityCount[severity] = (severityCount[severity] || 0) + latestScan.severityCount[severity];
-        });
-      }
+      totalVulns += p.totalVulns;
+      Object.keys(p.severityCount).forEach((severity) => {
+        severityCount[severity] = (severityCount[severity] || 0) + p.severityCount[severity];
+      });
     });
-    
+
     return { totalProjects, totalScans, totalVulns, severityCount };
-  }, [projects, allScans]);
+  }, [projects]);
 
   // Filter projects based on search query
   const filteredProjects = useMemo(() => {
@@ -928,13 +918,19 @@ function App() {
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#1e1e2e', 
+                  <Tooltip
+                    contentStyle={{
+                      // Açık, neredeyse beyaz tooltip arka planı
+                      backgroundColor: '#eff1f5',
                       border: '1px solid #313244',
                       borderRadius: '8px',
-                      color: '#cdd6f4'
+                      color: '#11111b',
                     }}
+                    labelStyle={{
+                      color: '#1e1e2e',
+                      fontWeight: 600,
+                    }}
+                    wrapperStyle={{ outline: 'none' }}
                   />
                   <Legend 
                     wrapperStyle={{ color: '#cdd6f4', fontSize: '12px' }}

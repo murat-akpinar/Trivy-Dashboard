@@ -180,10 +180,13 @@ func main() {
 			// Support both: export/project/image.json and export/project-image.json
 			projectName, imageName := extractProjectAndImageFromPath(relPath, exportDir)
 
+			// Determine scan time: prefer timestamp in filename if present, fallback to file mod time
+			scanTime := extractTimestampFromPath(relPath, info.ModTime())
+
 			summary := ScanSummary{
 				Filename:      relPath, // Store relative path for API access
 				Size:          info.Size(),
-				ModifiedAt:    info.ModTime(),
+				ModifiedAt:    scanTime,
 				SeverityCount: make(map[string]int),
 			}
 			summary.ProjectName = projectName
@@ -261,11 +264,14 @@ func main() {
 			project := projectsMap[projectName]
 			project.TotalScans++
 
+			// Determine scan time: prefer timestamp in filename if present, fallback to file mod time
+			scanTime := extractTimestampFromPath(relPath, info.ModTime())
+
 			// Create scan summary
 			scanSummary := ScanSummary{
 				Filename:      relPath, // Store relative path
 				Size:          info.Size(),
-				ModifiedAt:    info.ModTime(),
+				ModifiedAt:    scanTime,
 				SeverityCount: make(map[string]int),
 			}
 			scanSummary.ProjectName = projectName
@@ -397,11 +403,14 @@ func main() {
 
 			project.TotalScans++
 
+			// Determine scan time: prefer timestamp in filename if present, fallback to file mod time
+			scanTime := extractTimestampFromPath(relPath, info.ModTime())
+
 			// Create scan summary for this file
 			scanSummary := ScanSummary{
 				Filename:      relPath, // Store relative path
 				Size:          info.Size(),
-				ModifiedAt:    info.ModTime(),
+				ModifiedAt:    scanTime,
 				SeverityCount: make(map[string]int),
 			}
 			scanSummary.ProjectName = fileProjectName
@@ -664,6 +673,51 @@ func removeTimestampFromFilename(filename string) string {
 		}
 	}
 	return filename
+}
+
+// extractTimestampFromPath tries to read timestamp from filename and convert it to time.Time.
+// If no valid timestamp pattern exists, it falls back to the provided defaultTime (usually file ModTime).
+func extractTimestampFromPath(relPath string, defaultTime time.Time) time.Time {
+	// Normalize and strip extension
+	relPath = filepath.ToSlash(relPath)
+	basePath := strings.TrimSuffix(relPath, ".json")
+	if basePath == "" {
+		return defaultTime
+	}
+
+	_, fileName := filepath.Split(basePath)
+
+	// Timestamp pattern: -YYYYMMDD-HHMMSS (16 chars)
+	if len(fileName) > 16 {
+		lastPart := fileName[len(fileName)-16:]
+		if len(lastPart) == 16 && lastPart[0] == '-' && strings.Count(lastPart, "-") == 2 {
+			parts := strings.Split(lastPart[1:], "-") // skip first dash
+			if len(parts) == 2 && len(parts[0]) == 8 && len(parts[1]) == 6 {
+				// Validate numeric
+				isValid := true
+				for _, part := range parts {
+					for _, r := range part {
+						if r < '0' || r > '9' {
+							isValid = false
+							break
+						}
+					}
+					if !isValid {
+						break
+					}
+				}
+				if isValid {
+					// Parse timestamp in local time
+					tsStr := parts[0] + "-" + parts[1] // YYYYMMDD-HHMMSS
+					if t, err := time.ParseInLocation("20060102-150405", tsStr, time.Local); err == nil {
+						return t
+					}
+				}
+			}
+		}
+	}
+
+	return defaultTime
 }
 
 // extractProjectAndImage is kept for backward compatibility
